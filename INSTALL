@@ -1,0 +1,28 @@
+Compilation and installation:
+=============================
+
+Dependency
+----------
+
+The only dependency is HDF5 in version 1.8.3.
+(see http://www.hdfgroup.org/HDF5/release/obtain5.html)
+
+
+Compilation
+-----------
+
+cmake is used to compile Amelet-HDF tools.
+
+Just tape the following commands :
+
+cd somewhere
+mkdir build
+cd build
+ccmake path/to/amelet-hdf/directory
+> There must be a CMakeLists.txt file in this directory.
+> IMPORTANT : Answer the questions about HDF5.
+
+make
+make install
+
+All executable are in ./bin.
