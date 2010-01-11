@@ -52,6 +52,7 @@ module unstructuredmesh_m
         character(len=AL) :: name = ""
         real, dimension(:,:), allocatable :: nodes
         integer, dimension(:), allocatable :: elements
+        integer, dimension(:), allocatable :: offsets
         integer, dimension(:), allocatable :: element_nodes
         type(group_t), dimension(:), allocatable :: groups
         type(groupgroup_t), dimension(:), allocatable :: groupgroups
@@ -449,6 +450,25 @@ module unstructuredmesh_m
                 endif
             enddo
         end function get_group_by_name
+
+        ! Generates the offsets field of an unstructured mesh
+        subroutine generate_offsets(umesh)
+            type(unstructured_mesh_t), intent(inout) :: umesh
+
+            integer, dimension(:), allocatable :: node_numbers
+            integer :: i, nb_element
+
+            nb_element = size(umesh%elements)
+
+            allocate(node_numbers(nb_element))
+            call generate_node_numbers(umesh, nb_element, node_numbers)
+
+            allocate(umesh%offsets(nb_element))
+            do i=1, nb_element
+                umesh%offsets(i) = sum(node_numbers(1:i)) + 1
+            enddo
+            deallocate(node_numbers)
+        end subroutine generate_offsets
 
         ! Return a number of nodes array for the element in umesh
         ! inferior or equal than element_index
