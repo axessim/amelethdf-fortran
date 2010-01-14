@@ -26,10 +26,22 @@ module amelethdf_m
             endif
         end subroutine check
 
+        ! Can remove the null character at the end of a string
+        ! c is an optional character. It is used to fill
+        ! the rest of the string
+        subroutine trim_null_char(string, c)
+            character(len=*), intent(inout) :: string
+            character, intent(in), optional :: c
+            character :: c1
+
+            c1 = ""
+            if (present(c)) c1 = c
+
+            string(scan(string, char(0)):) = c1
+        end subroutine trim_null_char
+
         ! Read the number of children of a group
         function read_number_of_children(file_id, path)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             integer :: read_number_of_children
@@ -87,6 +99,7 @@ module amelethdf_m
                 call h5ltget_attribute_string_f(file_id, path, attr, &
                                                 buf1, hdferr)
                 call check(MSIG//"Can't read attribute for "//path//"@"//attr)
+                call trim_null_char(buf1)
                 buf = trim(buf1)
             endif
         end function read_attribute
