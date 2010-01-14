@@ -496,7 +496,7 @@ module unstructuredmesh_m
                 case(2)
                     number_of_nodes = 3
                 case(11)
-                    number_of_nodes = 11
+                    number_of_nodes = 3
                 case(12)
                     number_of_nodes = 6
                 case(13)
