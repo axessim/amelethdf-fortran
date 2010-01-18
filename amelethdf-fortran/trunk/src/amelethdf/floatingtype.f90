@@ -41,8 +41,6 @@ module floatingtype_m
     contains
         ! Reads a floatingtype_t structure
         subroutine read(file_id, path, ft)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(floatingtype_t), intent(inout) :: ft
@@ -64,8 +62,6 @@ module floatingtype_m
 
         ! Returns the type (as an integer) of a floatingType
         integer function get_type(file_id, path)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
 
@@ -91,8 +87,6 @@ module floatingtype_m
         end function
 
         subroutine clear_content(ft)
-            implicit none
-
             type(floatingtype_t), intent(inout) :: ft
 
             ft%floatingtype = 0
@@ -105,40 +99,30 @@ module floatingtype_m
 
         ! Series of test functions
         logical function issinglereal(ft)
-            implicit none
-
             type(floatingtype_t), intent(in) :: ft
 
             issinglereal = (ft%floatingtype == E_SINGLE_REAL)
         end function issinglereal
 
         logical function issinglecomplex(ft)
-            implicit none
-
             type(floatingtype_t), intent(in) :: ft
 
             issinglecomplex = (ft%floatingtype == E_SINGLE_COMPLEX)
         end function issinglecomplex
 
         logical function isvector(ft)
-            implicit none
-
             type(floatingtype_t), intent(in) :: ft
 
             isvector = (ft%floatingtype == E_VECTOR)
         end function isvector
 
         logical function isdataset(ft)
-            implicit none
-
             type(floatingtype_t), intent(in) :: ft
 
             isdataset = (ft%floatingtype == E_DATA_SET)
         end function isdataset
 
         logical function isarrayset(ft)
-            implicit none
-
             type(floatingtype_t), intent(in) :: ft
 
             isarrayset = (ft%floatingtype == E_ARRAY_SET)
