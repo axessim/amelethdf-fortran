@@ -33,11 +33,13 @@ module amelethdf_m
             character(len=*), intent(inout) :: string
             character, intent(in), optional :: c
             character :: c1
+            integer :: ind
 
             c1 = ""
             if (present(c)) c1 = c
 
-            string(scan(string, char(0)):) = c1
+            ind = scan(string, char(0))
+            if (ind/=0) string(ind:) = c1
         end subroutine trim_null_char
 
         ! Read the number of children of a group
