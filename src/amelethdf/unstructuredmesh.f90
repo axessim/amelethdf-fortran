@@ -361,8 +361,10 @@ module unstructuredmesh_m
             integer :: i, offset = 1
             integer(kind=8) :: element_type
 
-            print *, "\n\nUnstructured Mesh"
-            print *, "Name : ", umesh%name
+            print *
+            print *
+            print *, "Unstructured Mesh"
+            print *, "Name : ", trim(umesh%name)
 
             print *, "Number of nodes : ", size(umesh%nodes)
             do i=1, size(umesh%nodes)
@@ -374,16 +376,16 @@ module unstructuredmesh_m
                 element_type = umesh%elements(i)
                 print *, "Element n°", i-1, ", type :", umesh%elements(i)
                 if (element_type == 1) then
-                    print *, "\tNode n°1 :", umesh%element_nodes(offset)
+                    print *, "  Node n°1 :", umesh%element_nodes(offset)
                     offset = offset + 1
-                    print *, "\tNode n°2 :", umesh%element_nodes(offset)
+                    print *, "  Node n°2 :", umesh%element_nodes(offset)
                     offset = offset + 1
                 else if (element_type == 2) then
-                    print *, "\tNode n°1 :", umesh%element_nodes(offset)
+                    print *, "  Node n°1 :", umesh%element_nodes(offset)
                     offset = offset + 1
-                    print *, "\tNode n°2 :", umesh%element_nodes(offset)
+                    print *, "  Node n°2 :", umesh%element_nodes(offset)
                     offset = offset + 1
-                    print *, "\tNode n°3 :", umesh%element_nodes(offset)
+                    print *, "  Node n°3 :", umesh%element_nodes(offset)
                     offset = offset + 1
                 else if (element_type == 11) then
                     continue
@@ -405,28 +407,32 @@ module unstructuredmesh_m
             enddo
 
             ! Groups
+            print *
             print *, "Number of groups : ", size(umesh%groups)
             do i=1, size(umesh%groups)
-                print *, "  name : ",trim(umesh%groups(i)%name)
+                print *, "--name : ",trim(umesh%groups(i)%name)
                 print *, "  type : ", trim(umesh%groups(i)%type)
                 print *, "  entityType : ", trim(umesh%groups(i)%entity_type)
             enddo
 
             ! GroupGroups
+            print *
             print *, "Number of groupGroups : ", size(umesh%groupgroups)
             do i=1, size(umesh%groupgroups)
                 print *, "Name : ", trim(umesh%groupgroups(i)%name)
             enddo
 
             ! SelectorOnMesh/nodes
-            print *, "\nSelector on mesh / nodes ..."
+            print *
+            print *, "Selector on mesh / nodes ..."
             do i=1,size(umesh%som_node%short_name)
                 print *, "shortName : ", trim(umesh%som_node%short_name(i)), &
                          ", index : ", umesh%som_node%index(i)
             enddo
 
             ! SelectorOnMesh/elements
-            print *, "\nSelector on mesh / elements ..."
+            print *
+            print *, "Selector on mesh / elements ..."
             do i=1,size(umesh%som_element%short_name)
                 print *, "shortName : ", trim(umesh%som_element%short_name(i)), &
                          ", index : ", umesh%som_element%index(i), &
@@ -463,6 +469,7 @@ module unstructuredmesh_m
             allocate(node_numbers(nb_element))
             call generate_node_numbers(umesh, nb_element, node_numbers)
 
+            if (allocated(umesh%offsets)) deallocate(umesh%offsets)
             allocate(umesh%offsets(nb_element))
             do i=1, nb_element
                 umesh%offsets(i) = sum(node_numbers(1:i)) + 1
