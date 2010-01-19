@@ -366,8 +366,8 @@ module unstructuredmesh_m
             print *, "Unstructured Mesh"
             print *, "Name : ", trim(umesh%name)
 
-            print *, "Number of nodes : ", size(umesh%nodes)
-            do i=1, size(umesh%nodes)
+            print *, "Number of nodes : ", size(umesh%nodes)/3
+            do i=1, size(umesh%nodes)/3
                 print *, "Node n°", i-1, " :", umesh%nodes(:, i)
             enddo
 
@@ -492,7 +492,7 @@ module unstructuredmesh_m
         end subroutine generate_node_numbers
 
         ! Return the number of nodes for a given element type
-        function number_of_nodes(element_type)
+        elemental function number_of_nodes(element_type)
             integer, intent(in) :: element_type
 
             integer :: i, number_of_nodes
