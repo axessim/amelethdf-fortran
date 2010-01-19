@@ -160,14 +160,21 @@ module hdfpath_m
 
         ! joins paths of an array of path
         ! for ["/foo", "bar"] returns "/foo/bar"
-        function join(paths)
+        function join(paths, sep_)
             implicit none
             
             character(len=*), dimension(:), intent(in) :: paths
             character(len=size(paths)*len(paths)) :: join
+            character, intent(in), optional :: sep_
             
             integer :: i
-            character :: sep = "/"
+            character :: sep
+
+            if (present(sep_)) then
+               sep = sep_
+            else
+               sep = "/"
+            end if
 
             join = trim(remove_sep(paths(1), .true.))
             do i=2,size(paths)
