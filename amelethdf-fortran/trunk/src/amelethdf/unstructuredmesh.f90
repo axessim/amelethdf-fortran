@@ -6,7 +6,7 @@ module unstructuredmesh_m
                             AL => ABSOLUTE_PATH_NAME_LENGTH, &
                             read_children_name
     use mesh_m, only : groupgroup_t, print_groupgroup, read_groupgroup
-    use hdfpath_m, only : exists
+    use hdfpath_m, only : exists, join
 
     implicit none
 
@@ -20,7 +20,7 @@ module unstructuredmesh_m
     character(len=*), parameter :: SURFACE_ENTITY_TYPE = "surface"
     character(len=*), parameter :: VOLUME_ENTITY_TYPE = "volume"
     character(len=*), parameter :: ELEMENT_NODES = "/elementNodes"
-    character(len=*), parameter :: GROUP = "/group"
+    character(len=*), parameter :: S_GROUP = "/group"
     character(len=*), parameter :: GROUPGROUP = "/groupGroup"
     character(len=*), parameter :: SELECTOR_ON_MESH="/selectorOnMesh"
     character(len=*), parameter :: TC_SHORTNAME="shortName"
@@ -122,7 +122,7 @@ module unstructuredmesh_m
 
             ! groups
             path = ""
-            path = trim(mesh_path)//GROUP
+            path = trim(mesh_path)//S_GROUP
             if (allocated(group_name)) deallocate(group_name)
             call read_children_name(file_id, path, group_name)
             n = size(group_name)
@@ -456,6 +456,20 @@ module unstructuredmesh_m
                 endif
             enddo
         end function get_group_by_name
+
+
+        ! Look for a group in mesh with a given short name (node's name)
+        function get_group_by_short_name(umesh, name) result(group)
+            type(unstructured_mesh_t), target, intent(in) :: umesh
+            character(len=*), intent(in) :: name
+            type(group_t), pointer :: group
+
+            character(len=AL) :: path
+
+            path = join((/umesh%name, S_GROUP, name/))
+            group => get_group_by_name(umesh, path)
+        end function get_group_by_short_name
+        
 
         ! Generates the offsets field of an unstructured mesh
         subroutine generate_offsets(umesh)
