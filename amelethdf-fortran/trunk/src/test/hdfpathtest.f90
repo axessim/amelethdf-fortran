@@ -125,11 +125,11 @@ program hdfpathtest
 
 
     print *, "\n\njoin"
-    path_array = (/"foo/bar/", "/baz"/)
+    path_array = (/"foo/bar/", "/baz    "/)
     print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
-    path_array = (/"foo/bar/", "/baz/"/)
+    path_array = (/"foo/bar/", "/baz/   "/)
     print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
-    path_array = (/"/foo/bar/", "/baz/"/)
+    path_array = (/"/foo/bar/", "/baz/    "/)
     print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
 
     print *, "\n\nisabs"
@@ -169,10 +169,10 @@ program hdfpathtest
     path_array = (/"foo/bar/", "/foo/bar"/)
     print *, "Paths : ", trim(path_array(1)), ", ", &
              trim(path_array(2)), " :", like(path_array(1), path_array(2))
-    path_array = (/"foo/bar/", "/foo/*"/)
+    path_array = (/"foo/bar/", "/foo/*  "/)
     print *, "Paths : ", trim(path_array(1)), ", ", &
              trim(path_array(2)), " :", like(path_array(1), path_array(2))
-    path_array = (/"foo/bar/baz", "/foo/*/baz"/)
+    path_array = (/"foo/bar/baz", "/foo/*/baz "/)
     print *, "Paths : ", trim(path_array(1)), ", ", &
              trim(path_array(2)), " :", like(path_array(1), path_array(2))
     deallocate(path_array)
