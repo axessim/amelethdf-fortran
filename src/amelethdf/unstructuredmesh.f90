@@ -475,20 +475,18 @@ module unstructuredmesh_m
         subroutine generate_offsets(umesh)
             type(unstructured_mesh_t), intent(inout) :: umesh
 
-            integer, dimension(:), allocatable :: node_numbers
             integer :: i, nb_element
 
             nb_element = size(umesh%elements)
 
-            allocate(node_numbers(nb_element))
-            call generate_node_numbers(umesh, nb_element, node_numbers)
-
             if (allocated(umesh%offsets)) deallocate(umesh%offsets)
             allocate(umesh%offsets(nb_element))
-            do i=1, nb_element
-                umesh%offsets(i) = sum(node_numbers(1:i)) + 1
+
+            umesh%offsets(1) = 1
+            do i=2, nb_element
+                umesh%offsets(i) = umesh%offsets(i-1) &
+                     + number_of_nodes(umesh%elements(i-1))
             enddo
-            deallocate(node_numbers)
         end subroutine generate_offsets
 
         ! Return a number of nodes array for the element in umesh
