@@ -22,10 +22,13 @@ program hdfpathtest
     integer(hid_t) :: file_id
 
     ! Path operations
-    print *, "\nhdfpathtest"
+    print *
+    print *, "hdfpathtest"
     print *, "Path handling ..."
 
-    print *, "\n\nRemove_sep ... "
+    print *
+    print *
+    print *, "Remove_sep ... "
     path = "/foo/bar/baz/"
     l = scan(path, "/", .true.)
     print *, "Path : ", path
@@ -44,7 +47,10 @@ program hdfpathtest
     print *, "/foo/", " : ", trim(remove_sep("/foo/"))
     print *, trim("/foo/"), " with true : ", trim(remove_sep("/foo/", .true.))
 
-    print *, "\n\nHead"
+    
+    print *
+    print *
+    print *, "Head"
     path = "/foo/bar/baz/"
     l = scan(path, "/", .true.)
     print *, "Path : ", path
@@ -56,8 +62,9 @@ program hdfpathtest
     print *, "foo/", " : ", trim(head("foo/"))
     print *, "/foo/", " : ", trim(head("/foo/"))
 
-
-    print *, "\n\nLsplit"
+    print *
+    print *
+    print *, "Lsplit"
     allocate(path_array(2))
     path = "/foo/bar/baz/"
     path_array = lsplit(path)
@@ -85,7 +92,9 @@ program hdfpathtest
     print *, "Path : ", trim(path), ", split : ", trim(path_array(1)), ", ", trim(path_array(2))
 
 
-    print *, "\n\nRsplit"
+    print *
+    print *
+    print *, "nRsplit"
     path = "/foo/bar/baz/"
     path_array = rsplit(path)
     print *, "Path : ", trim(path), ", split : ", trim(path_array(1)), ", ", trim(path_array(2))
@@ -112,7 +121,9 @@ program hdfpathtest
     print *, "Path : ", trim(path), ", split : ", trim(path_array(1)), ", ", trim(path_array(2))
 
 
-    print *, "\n\nDirname Basename"
+    print *
+    print *
+    print *, "Dirname Basename"
     path = "/foo/bar/baz/"
     print *, trim(path), ", dirname path : ", trim(dirname(path)), ", basename : ", trim(basename(path))
     path = "foo/bar/baz/"
@@ -123,49 +134,64 @@ program hdfpathtest
     print *, trim(path), ", dirname path : ", trim(dirname(path)), ", basename : ", trim(basename(path))
 
 
-
-    print *, "\n\njoin"
+    print *
+    print *
+    print *, "join"
     path_array = (/"foo/bar/", "/baz    "/)
     print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
     path_array = (/"foo/bar/", "/baz/   "/)
     print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
     path_array = (/"/foo/bar/", "/baz/    "/)
     print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
+    path_array = (/"/a/bb/", "/a/bb/ccc    "/)
+    print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
+    path_array = (/"/aaa/", "/ccccccc    "/)
+    print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
 
-    print *, "\n\nisabs"
+    print *
+    print *
+    print *, "nisabs"
     path = "/foo/bar/baz/"
     print *, trim(path), ",  absolute : ", isabs(path)
     path = "bar/baz/"
     print *, trim(path), ",  absolute : ", isabs(path)
 
-    print *, "\n\ncontain"
+    print *
+    print *
+    print *, "contain"
     print *, "/foo/bar/baz contains /foo/bar : ", contain("/foo/bar/baz",&
                                                           "/foo/bar")
-    print *, "\n\nElement :"
-    print *, "\nFrom the beginning :"
+    print *
+    print *
+    print *, "Element :"
+    print *
+    print *, "From the beginning :"
     path = "/foo/bar/baz/"
     print *, "Path : ", trim(path)
-    print *, "first element : ", element(path, 1)
-    print *, "second element : ", element(path, 2)
-    print *, "third element : ", element(path, 3)
+    print *, "first element : ", trim(element(path, 1))
+    print *, "second element : ", trim(element(path, 2))
+    print *, "third element : ", trim(element(path, 3))
     path = "foo/bar/baz"
     print *, "Path : ", trim(path)
-    print *, "first element : ", element(path, 1)
-    print *, "second element : ", element(path, 2)
-    print *, "third element : ", element(path, 3)
-    print *, "\nFrom the end :"
+    print *, "first element : ", trim(element(path, 1))
+    print *, "second element : ", trim(element(path, 2))
+    print *, "third element : ", trim(element(path, 3))
+    print *
+    print *, "From the end :"
     path = "/foo/bar/baz/"
     print *, "Path : ", trim(path)
-    print *, "first element : ", element(path, 1, .true.)
-    print *, "second element : ", element(path, 2, .true.)
-    print *, "third element : ", element(path, 3, .true.)
+    print *, "first element : ", trim(element(path, 1, .true.))
+    print *, "second element : ", trim(element(path, 2, .true.))
+    print *, "third element : ", trim(element(path, 3, .true.))
     path = "foo/bar/baz"
     print *, "Path : ", trim(path)
-    print *, "first element : ", element(path, 1, .true.)
-    print *, "second element : ", element(path, 2, .true.)
-    print *, "third element : ", element(path, 3, .true.)
+    print *, "first element : ", trim(element(path, 1, .true.))
+    print *, "second element : ", trim(element(path, 2, .true.))
+    print *, "third element : ", trim(element(path, 3, .true.))
 
-    print *, "\n\nLike :"
+    print *
+    print *
+    print *, "Like :"
     path_array = (/"foo/bar/", "/foo/bar"/)
     print *, "Paths : ", trim(path_array(1)), ", ", &
              trim(path_array(2)), " :", like(path_array(1), path_array(2))
@@ -178,7 +204,8 @@ program hdfpathtest
     deallocate(path_array)
 
 
-    print *, "\nFile operations"
+    print *
+    print *, "File operations"
     ! Write working directory
     call getcwd(working_directory)
     print *, "Working directory : ", working_directory
