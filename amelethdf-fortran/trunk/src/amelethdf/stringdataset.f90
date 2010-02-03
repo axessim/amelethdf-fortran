@@ -16,7 +16,6 @@ module stringdataset_m
             integer, intent(in) :: l, nb
             character(len=(l*nb)), intent(inout) :: buf
 
-
             call h5ltread_dataset_string_f(file_id, path, buf, hdferr)
             call check(MSIG//"Can't read string dataset for "//path)
         end subroutine read_string_dataset2
@@ -99,4 +98,51 @@ module stringdataset_m
                 endif
             enddo
         end function str_index
+
+       ! Write a nd string dataset
+        subroutine write_nd_dataset(file_id, path, values, values_shape)
+            use h5lt
+
+            integer(hid_t), intent(in) :: file_id
+            character(len=*), intent(in) :: path
+            integer, dimension(:), intent(in) :: values_shape
+            character(len=*), dimension(product(values_shape)), &
+                intent(in) :: values
+
+            character(len=*), parameter :: MSIG1 = MSIG//"[WRITE_ND_DATASET] "
+            integer :: rank
+            integer(hsize_t), dimension(:), allocatable :: dims
+            integer(hid_t) :: dataspace_id, dset_id
+            integer(size_t) :: type_size
+            integer(hid_t) :: type_id
+
+            rank = size(values_shape)
+
+            allocate(dims(rank))
+            dims = values_shape
+
+            call h5tcopy_f(H5T_NATIVE_CHARACTER, type_id, hdferr)
+            call H5tset_size_f(type_id, len(values), hdferr);
+            call check(MSIG1//"Can't get type size")
+
+            ! Create the dataspace
+            call h5screate_simple_f(rank, dims, dataspace_id, hdferr)
+            call check(MSIG1//"Can't create data space")
+
+            ! Create the dataset
+            call h5dcreate_f(file_id, trim(path), type_id, &
+                             dataspace_id, dset_id, hdferr)
+            call check(MSIG1//"Can't create dataset")
+
+            ! Write data
+            call h5dwrite_f(dset_id, type_id, values, &
+                            dims, hdferr, H5P_DEFAULT_F)
+            call check(MSIG1//"Can't write dataset")
+
+            call h5tclose_f(type_id, hdferr)
+            call h5dclose_f(dset_id, hdferr)
+            call h5sclose_f(dataspace_id, hdferr)
+
+            deallocate(dims)
+        end subroutine write_nd_dataset
 end module stringdataset_m
