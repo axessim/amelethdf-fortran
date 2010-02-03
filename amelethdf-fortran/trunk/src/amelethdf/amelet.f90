@@ -14,9 +14,11 @@ module amelethdf
                                    unstructured_mesh_t, &
                                    umesh_group_t => group_t, &
                                    umesh_generate_node_numbers => &
-                                    generate_node_numbers, &
+                                   generate_node_numbers, &
                                    umesh_number_of_nodes => number_of_nodes, &
-                                   umesh_get_group_by_name => get_group_by_name
+                                   umesh_get_group_by_name => get_group_by_name, &
+                                   umesh_get_index_by_short_name_in_some => &
+                                   get_index_by_short_name_in_some
     use structuredmesh_m, only : readStructuredMesh => read, &
                                  printStructuredMesh => printt, &
                                  structured_mesh_t
@@ -35,13 +37,16 @@ module amelethdf
                            arrayset_to_string => to_string2
     use physicalmodel_m, only : C_PHYSICAL_MODEL
     use complextype_m, only : create_attribute, read_cattribute, &
-                            write_complex_type, read_attribute
-    use hdfpath_m, only : exists, isleaf, isgroup, like
+                            write_complex_type, read_attribute, &
+                            write_complex_dataset => write_nd_dataset
+    use hdfpath_m, only : exists, isleaf, isgroup, like, join
     use planewave_m, only : planewave_t, read_planewave => read, &
                             islinear, iselliptic, C_PLANE_WAVE
-    use floatingtype_m, only : floatingtype_t, read_floatingtype => read
+    use floatingtype_m, only : floatingtype_t, read_floatingtype => read, &
+                               issinglereal, isvector, convert_to_real_vector
     use stringdataset_m, only : get_dataset_lmn, read_string_dataset1, &
-                                read_string_vector => read_vector
+                                read_string_vector => read_vector, &
+                                write_string_dataset => write_nd_dataset
     use linkoutputrequest_m, only : link_t, read_link => read, isdataonmesh, &
                                     C_LINK, C_OUTPUT_REQUEST
 
