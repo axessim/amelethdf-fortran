@@ -43,7 +43,8 @@ module amelethdf
     use planewave_m, only : planewave_t, read_planewave => read, &
                             islinear, iselliptic, C_PLANE_WAVE
     use floatingtype_m, only : floatingtype_t, read_floatingtype => read, &
-                               issinglereal, isvector, convert_to_real_vector
+                               issinglereal, isvector, convert_to_real_vector, &
+                               set_floating_type
     use stringdataset_m, only : get_dataset_lmn, read_string_dataset1, &
                                 read_string_vector => read_vector, &
                                 write_string_dataset => write_nd_dataset
