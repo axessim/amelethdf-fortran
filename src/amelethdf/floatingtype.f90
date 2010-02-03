@@ -68,6 +68,7 @@ module floatingtype_m
             character(LEN=EL) :: buf
             logical :: ok
 
+            buf = ""
             ok = read_attribute(file_id, path, A_FLOATING_TYPE, buf, .true.)
             get_type = -1
             if (trim(buf) == V_SINGLE_REAL) then
@@ -82,7 +83,8 @@ module floatingtype_m
                 get_type = E_ARRAY_SET
             else
                 hdferr = -1
-                call check(MSIG//"Can't get floating type for "//path)
+                call check(MSIG//"Can't get floating type for "//trim(path) &
+                           //", attribute value : "//trim(buf))
             end if
         end function
 
@@ -127,4 +129,18 @@ module floatingtype_m
 
             isarrayset = (ft%floatingtype == E_ARRAY_SET)
         end function isarrayset
+
+        function convert_to_real_vector(ft) result(vector)
+            type(floatingtype_t), intent(in) :: ft
+
+            real, dimension(:), allocatable :: vector
+
+            if (issinglereal(ft)) then
+                allocate(vector(1))
+                vector = ft%singlereal%value
+            else if (isvector(ft)) then
+                allocate(vector(size(ft%vector%rvalue)))
+                vector(:) = ft%vector%rvalue(:)
+            endif
+        end function convert_to_real_vector
 end module floatingtype_m
