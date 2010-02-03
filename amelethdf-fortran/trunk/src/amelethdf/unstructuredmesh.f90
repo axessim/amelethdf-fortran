@@ -4,7 +4,7 @@ module unstructuredmesh_m
     use amelethdf_m, only : check, hdferr, &
                             EL => ELEMENT_NAME_LENGTH, &
                             AL => ABSOLUTE_PATH_NAME_LENGTH, &
-                            read_children_name
+                            read_children_name, trim_null_char
     use mesh_m, only : groupgroup_t, print_groupgroup, read_groupgroup
     use hdfpath_m, only : exists, join
 
@@ -221,7 +221,9 @@ module unstructuredmesh_m
             integer(size_t), dimension(:), allocatable :: field_sizes
             integer(size_t), dimension(:), allocatable :: field_offsets
 
+            integer :: i
             character(len=20), dimension(:), allocatable :: cbuf
+
             print *, "1 - Path : ", path
             call h5tbget_table_info_f(file_id, path, nfields, nrecords, hdferr)
             call check(MSIG//"Can't read table info for"//path)
@@ -245,6 +247,9 @@ module unstructuredmesh_m
                                        start, nrecords, type_size, &
                                        cbuf, hdferr)
             call check(MSIG//"Can't field values for"//path//"#"//TC_SHORTNAME)
+            do i=1,size(cbuf)
+                call trim_null_char(cbuf(i))
+            enddo
             somn%short_name(:) = cbuf(:)
             print *, "4 - "
 
@@ -280,7 +285,9 @@ module unstructuredmesh_m
             integer(size_t), dimension(:), allocatable :: field_sizes
             integer(size_t), dimension(:), allocatable :: field_offsets
 
+            integer :: i
             character(len=EL), dimension(:), allocatable :: cbuf
+
             print *, "1 - Path : ", path
             call h5tbget_table_info_f(file_id, path, nfields, nrecords, hdferr)
             call check(MSIG//"Can't read table info for"//path)
@@ -304,6 +311,9 @@ module unstructuredmesh_m
                                        start, nrecords, type_size, &
                                        cbuf, hdferr)
             call check(MSIG//"Can't field values for"//path//"#"//TC_SHORTNAME)
+            do i=1,size(cbuf)
+                call trim_null_char(cbuf(i))
+            enddo
             some%short_name(:) = cbuf(:)
             print *, "4 - "
 
@@ -542,4 +552,21 @@ module unstructuredmesh_m
                     number_of_nodes = 2
             end select
         end function number_of_nodes
+
+        ! Given a selector_on_mesh_element_t (some) object, return the index
+        ! matching a short_name
+        function get_index_by_short_name_in_some(some, short_name) result(ind)
+            type(selector_on_mesh_element_t), intent(in) :: some
+            character(len=*), intent(in) :: short_name
+
+            integer :: i, ind
+
+            ind = 0
+            do i=1, size(some%short_name)
+                if (short_name==trim(some%short_name(i))) then
+                    ind = some%index(i)
+                    exit
+                endif
+            enddo
+        end function get_index_by_short_name_in_some
 end module unstructuredmesh_m
