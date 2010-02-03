@@ -11,8 +11,6 @@ module complextype_m
     contains
         ! Create the real datatype
         subroutine create_type_id(real_or_double, type_id)
-            implicit none
-
             integer(hid_t), intent(in) :: real_or_double
             integer(hid_t), intent(out) :: type_id
 
@@ -32,13 +30,11 @@ module complextype_m
 
         ! Create the real datatype
         subroutine create_real_type_id()
-            implicit none
             call create_type_id(H5T_NATIVE_REAL, real_type_id)
         end subroutine create_real_type_id
 
         ! Create the double datatype
         subroutine create_double_type_id()
-            implicit none
             call create_type_id(H5T_NATIVE_DOUBLE, double_type_id)
         end subroutine create_double_type_id
 
@@ -50,8 +46,6 @@ module complextype_m
 
         ! write the named complex type in a file (at the root)
         subroutine write_complex_type(file_id)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
 
             call create_type_ids()
@@ -63,8 +57,6 @@ module complextype_m
 
         ! create a complex attribute in path
         subroutine create_attribute(file_id, path, name, value)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             character(len=*), intent(in) :: name
@@ -88,10 +80,6 @@ module complextype_m
 
         ! Read a complex attribute at path
         function read_attribute(file_id, path, name, value, mandatory) result(here)
-            use h5lt
-
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             character(len=*), intent(in) :: name
@@ -130,8 +118,6 @@ module complextype_m
         subroutine read_dataset(file_id, path, values)
             use h5lt
 
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             complex, dimension(:), allocatable, intent(out) :: values
@@ -167,8 +153,6 @@ module complextype_m
        ! Write a 1D complex dataset
         subroutine write_dataset(file_id, path, values)
             use h5lt
-
-            implicit none
 
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
@@ -225,11 +209,72 @@ module complextype_m
             call h5sclose_f(dataspace_id, hdferr)
         end subroutine write_dataset
 
+       ! Write a nD complex dataset
+        subroutine write_nd_dataset(file_id, path, values, values_shape)
+            use h5lt
+
+            integer(hid_t), intent(in) :: file_id
+            character(len=*), intent(in) :: path
+            integer, dimension(:), intent(in) :: values_shape
+            complex, dimension(product(values_shape)), intent(in) :: values
+
+            character(len=*), parameter :: MSIG1 = MSIG//"[WRITE_ND_DATASET] "
+            integer :: rank
+            integer(hsize_t), dimension(:), allocatable :: dims
+            integer(hid_t) :: dataspace_id, dset_id, dtr_id, dti_id
+            integer(size_t) :: type_size
+            integer(hid_t) :: type_id
+
+            call create_type_ids()
+            type_id = real_type_id
+
+            rank = size(values_shape)
+
+            allocate(dims(rank))
+            dims = values_shape
+
+            ! Create the dataspace
+            call h5screate_simple_f(rank, dims, dataspace_id, hdferr)
+            call check(MSIG1//"Can't create data space")
+
+            ! Create the dataset
+            call h5dcreate_f(file_id, trim(path), type_id, &
+                             dataspace_id, dset_id, hdferr)
+            call check(MSIG1//"Can't create dataset")
+
+            ! Create datatype for writing
+            call h5tget_size_f(H5T_NATIVE_REAL, type_size, hdferr)
+            call check(MSIG1//"Can't get size of type_id")
+
+            call h5tcreate_f(H5T_COMPOUND_F, type_size, dtr_id, hdferr)
+            call check(MSIG1//"Can't create real data type")
+            call h5tinsert_f(dtr_id, "r", 0, H5T_NATIVE_REAL, hdferr)
+            call check(MSIG1//"Can't insert real part")
+
+            call h5tcreate_f(H5T_COMPOUND_F, type_size, dti_id, hdferr)
+            call check(MSIG1//"Can't create imaginary data type")
+            call h5tinsert_f(dti_id, "i", 0, H5T_NATIVE_REAL, hdferr)
+            call check(MSIG1//"Can't insert imaginary part")
+
+            ! Write data
+            call h5dwrite_f(dset_id, dtr_id, real(values), &
+                            dims, hdferr, H5P_DEFAULT_F)
+            call check(MSIG1//"Can't write real part")
+            call h5dwrite_f(dset_id, dti_id, aimag(values), &
+                            dims, hdferr, H5P_DEFAULT_F)
+            call check(MSIG1//"Can't write imaginary part")
+
+            call h5tclose_f(dtr_id, hdferr)
+            call h5tclose_f(dti_id, hdferr)
+            call h5dclose_f(dset_id, hdferr)
+            call h5sclose_f(dataspace_id, hdferr)
+
+            deallocate(dims)
+        end subroutine write_nd_dataset
+
 
         subroutine read_cattribute(file_id, path, name, value)
             use h5lt
-
-            implicit none
 
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
