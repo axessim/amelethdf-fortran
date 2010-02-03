@@ -1,0 +1,35 @@
+module inmemory
+    use amelethdf
+
+    implicit none
+
+    character(len=*), parameter :: MSIG = "[IN-MEMORY] "
+    ! file block size in bytes.
+    integer(size_t), parameter :: increment = 1024**2
+    ! Backing storage strategy
+    logical, parameter :: backing_store = .false.
+
+contains
+    subroutine create_inmemory_file(name, file_id)
+        ! file name
+        character(len=*), intent(in) :: name
+	    ! File id
+	    integer(hid_t), intent(inout) :: file_id
+	    ! Property list access id
+	    integer(hid_t) :: faplist_id
+	    ! Error flag
+
+	    ! HDF5 library initialization
+	    call h5open_f(hdferr)
+
+	    call h5pcreate_f(H5P_FILE_ACCESS_F, faplist_id, hdferr)
+	    call check(MSIG//"Can't create property list")
+
+	    call h5pset_fapl_core_f(faplist_id, increment, backing_store, hdferr)
+        call check(MSIG//"Can't set core driver")
+
+	    call h5fcreate_f(name, H5F_ACC_TRUNC_F, file_id, hdferr, &
+	                     H5P_DEFAULT_F, faplist_id)
+    end subroutine create_inmemory_file
+end module inmemory
+
