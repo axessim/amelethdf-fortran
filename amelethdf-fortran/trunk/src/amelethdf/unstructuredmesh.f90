@@ -288,10 +288,8 @@ module unstructuredmesh_m
             integer :: i
             character(len=EL), dimension(:), allocatable :: cbuf
 
-            print *, "1 - Path : ", path
             call h5tbget_table_info_f(file_id, path, nfields, nrecords, hdferr)
             call check(MSIG//"Can't read table info for"//path)
-            print *, "2 - nfields : ", nfields, ", nrecords : ", nrecords
 
             allocate(field_names(nfields))
             allocate(field_sizes(nfields))
@@ -300,7 +298,6 @@ module unstructuredmesh_m
 !                                      field_sizes, field_offsets, type_size, &
 !                                      hdferr)
             call check(MSIG//"Can't read field info for"//path)
-            print *, "3 - "
 
             if (allocated(some%short_name)) deallocate(some%short_name)
             allocate(some%short_name(nrecords))
@@ -315,7 +312,6 @@ module unstructuredmesh_m
                 call trim_null_char(cbuf(i))
             enddo
             some%short_name(:) = cbuf(:)
-            print *, "4 - "
 
             if (allocated(some%index)) deallocate(some%index)
             allocate(some%index(nrecords))
@@ -325,7 +321,6 @@ module unstructuredmesh_m
                                        start, nrecords, type_size, &
                                        some%index, hdferr)
             call check(MSIG//"Can't field values for"//path//"#"//TC_INDEX)
-            print *, "5 - "
 
             if (allocated(some%v1)) deallocate(some%v1)
             allocate(some%v1(nrecords))
@@ -335,7 +330,6 @@ module unstructuredmesh_m
                                        start, nrecords, type_size, &
                                        some%v1, hdferr)
             call check(MSIG//"Can't field values for"//path//"#"//TC_V1)
-            print *, "6 - "
 
             if (allocated(some%v2)) deallocate(some%v2)
             allocate(some%v2(nrecords))
@@ -345,7 +339,6 @@ module unstructuredmesh_m
                                        start, nrecords, type_size, &
                                        some%v2, hdferr)
             call check(MSIG//"Can't field values for"//path//"#"//TC_V2)
-            print *, "7 - "
 
             if (allocated(some%v3)) deallocate(some%v3)
             allocate(some%v3(nrecords))
@@ -355,7 +348,6 @@ module unstructuredmesh_m
                                        start, nrecords, type_size, &
                                        some%v3, hdferr)
             call check(MSIG//"Can't field values for"//path//"#"//TC_V3)
-            print *, "8 - "
 
             deallocate(field_names, field_sizes, field_offsets, cbuf)
         end subroutine read_selector_on_mesh_element
