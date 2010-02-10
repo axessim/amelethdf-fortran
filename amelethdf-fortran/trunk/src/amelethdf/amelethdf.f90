@@ -29,7 +29,7 @@ module amelethdf_m
         ! Can remove the null character at the end of a string
         ! c is an optional character. It is used to fill
         ! the rest of the string
-        subroutine trim_null_char(string, c)
+        pure elemental subroutine trim_null_char(string, c)
             character(len=*), intent(inout) :: string
             character, intent(in), optional :: c
             character :: c1
@@ -68,6 +68,7 @@ module amelethdf_m
             do i=1, nb_children
                 call h5gget_obj_info_idx_f(file_id, trim(path), i-1, &
                                            children(i), obj_type, hdferr)
+                call trim_null_char(children(i))
                 call check(MSIG//"\nCan't read the name of children of "//path)
             enddo
         end subroutine read_children_name
