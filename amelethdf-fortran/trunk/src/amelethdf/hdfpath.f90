@@ -224,8 +224,6 @@ module hdfpath_m
         ! returns the nth element of path
         ! for ("/foo/bar/baz", 2) returns bar
         recursive function element(path, ind, back) result (res)
-            implicit none
-
             character(len=*), intent(in) :: path
             integer, intent(in) :: ind
             logical, optional, intent(in) :: back
@@ -261,8 +259,6 @@ module hdfpath_m
         ! Return true if a path looks like a patter
         ! For "/foo/bar/baz" & "/foo/*/baz" return true
         recursive function like(path, pattern) result (res)
-            implicit none
-
             character(len=*), intent(in) :: path
             character(len=*), intent(in) :: pattern
 

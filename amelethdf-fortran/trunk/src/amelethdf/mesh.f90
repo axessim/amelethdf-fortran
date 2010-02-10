@@ -49,7 +49,7 @@ module mesh_m
             end if
         end function mtype
 
-        function isStructured(file_id, path)
+        function isstructured(file_id, path)
             implicit none
 
             integer(hid_t), intent(in) :: file_id
@@ -61,7 +61,7 @@ module mesh_m
             if (mtype(file_id, path) == STRUCTURED) then
                 isStructured = .true.
             endif
-        end function isStructured
+        end function isstructured
 
         ! Reads a groupgroup
         subroutine read_groupgroup(file_id, path, group)

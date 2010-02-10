@@ -9,8 +9,6 @@ module stringdataset_m
     contains
         ! Reads a long string dataset
         subroutine read_string_dataset2(file_id, path, buf, l, nb)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             integer, intent(in) :: l, nb
@@ -22,8 +20,6 @@ module stringdataset_m
 
         ! Reads a (m x n) string dataset (rows x columns) of l characters
         subroutine read_string_dataset1(file_id, path, data, l, m, n)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             integer, intent(in) :: l, m, n
@@ -45,8 +41,6 @@ module stringdataset_m
         ! Reads the length of strings contains in a dataset
         ! The dataset must be a string dataset (no check)
         function get_dataset_lmn(file_id, path)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
 
@@ -65,8 +59,6 @@ module stringdataset_m
         end function get_dataset_lmn
 
         subroutine read_vector(file_id, path, vector)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             character(len=*), dimension(:), allocatable :: vector

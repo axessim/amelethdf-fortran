@@ -76,8 +76,6 @@ module amelethdf_m
 
         ! Reads a string attribute, it can be mandatory
         function read_attribute(file_id, path, attr, buf, mandatory) result(here)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path, attr
             character(len=*), intent(inout) :: buf
@@ -110,8 +108,6 @@ module amelethdf_m
         ! Reads a float attribute, it can be mandatory
         function read_float_attribute(file_id, path, attr, buf, mandatory) &
         result(here)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path, attr
             real, intent(inout) :: buf
@@ -139,8 +135,7 @@ module amelethdf_m
 
         ! Reads a float attribute, it can be mandatory
         function read_int_attribute(file_id, path, attr, buf, mandatory) &
-        result(here)
-            implicit none
+            result(here)
 
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path, attr

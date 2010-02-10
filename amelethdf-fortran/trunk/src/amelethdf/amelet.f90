@@ -9,8 +9,8 @@ module amelethdf
     use category_m, only : C_ELECTROMAGNETIC_SOURCE, C_GLOBAL_ENVIRONMENT, &
                            C_LABEL
     use mesh_m, only : C_MESH, mesh_names, isStructured
-    use unstructuredmesh_m, only : readUnstructuredMesh => read, &
-                                   printUnstructuredMesh => printt, &
+    use unstructuredmesh_m, only : umesh_read => read, &
+                                   umesh_print => printt, &
                                    unstructured_mesh_t, &
                                    umesh_group_t => group_t, &
                                    umesh_generate_node_numbers => &
@@ -20,8 +20,8 @@ module amelethdf
                                    umesh_get_index_by_short_name_in_some => &
                                    get_index_by_short_name_in_some, &
                                    umesh_generate_offsets => generate_offsets
-    use structuredmesh_m, only : readStructuredMesh => read, &
-                                 printStructuredMesh => printt, &
+    use structuredmesh_m, only : smesh_read => read, &
+                                 smesh_print => printt, &
                                  structured_mesh_t
     use simulation_m, only : read_simulation => read, &
                              print_simulation => printt, &
