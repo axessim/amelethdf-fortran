@@ -80,11 +80,11 @@ program ameletreader
                 path3 = trim(path2)//"/"//trim(children_name3(i))
                 print *, "\nReading ", trim(path3), " ..."
                 if (isStructured(file_id, trim(path3))) then
-                    call readStructuredMesh(file_id, trim(path3), smesh)
-                    call printStructuredMesh(smesh)
+                    call smesh_read(file_id, trim(path3), smesh)
+                    call smesh_print(smesh)
                 else
-                    call readUnstructuredMesh(file_id, trim(path3), umesh)
-                    call printUnstructuredMesh(umesh)
+                    call umesh_read(file_id, trim(path3), umesh)
+                    call umesh_print(umesh)
                 endif
             enddo
         enddo

@@ -16,7 +16,9 @@ module linkoutputrequest_m
     integer, parameter :: DATA_ON_MESH = 1
 
     type link_t
+        ! The name of the link
         character(len=AL) :: name = ""
+        ! The subject and the object of the link
         character(len=AL) :: subject = "", object = ""
     end type link_t
 
