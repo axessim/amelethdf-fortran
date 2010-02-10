@@ -1,7 +1,8 @@
 module simulation_m
     use h5lt
     use amelethdf_m, only : check, hdferr, EL => ELEMENT_NAME_LENGTH, &
-                                           AL => ABSOLUTE_PATH_NAME_LENGTH
+                                           AL => ABSOLUTE_PATH_NAME_LENGTH, &
+                                           trim_null_char
     use stringdataset_m, only : read_string_dataset1
 
     implicit none
@@ -79,6 +80,7 @@ module simulation_m
             m = dims(1); n= 1
             allocate(dataset(m))
             call read_string_dataset1(file_id, path, dataset, type_size, m, 1)
+            call trim_null_char(dataset)
         end subroutine read_dataset
 
         ! Print a simulation

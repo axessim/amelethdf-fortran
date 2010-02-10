@@ -18,12 +18,13 @@ module amelethdf
                                    umesh_number_of_nodes => number_of_nodes, &
                                    umesh_get_group_by_name => get_group_by_name, &
                                    umesh_get_index_by_short_name_in_some => &
-                                   get_index_by_short_name_in_some
+                                   get_index_by_short_name_in_some, &
+                                   umesh_generate_offsets => generate_offsets
     use structuredmesh_m, only : readStructuredMesh => read, &
                                  printStructuredMesh => printt, &
                                  structured_mesh_t
-    use simulation_m, only : readSimulation => read, &
-                             printSimulation => printt, &
+    use simulation_m, only : read_simulation => read, &
+                             print_simulation => printt, &
                              C_SIMULATION, &
                              simulation_t
     use simpletype_m, only : singlereal_t, read_singlereal, &
@@ -39,7 +40,7 @@ module amelethdf
     use complextype_m, only : create_attribute, read_cattribute, &
                             write_complex_type, read_attribute, &
                             write_complex_dataset => write_nd_dataset
-    use hdfpath_m, only : exists, isleaf, isgroup, like, join
+    use hdfpath_m, only : basename, dirname, exists, isleaf, isgroup, like, join
     use planewave_m, only : planewave_t, read_planewave => read, &
                             islinear, iselliptic, C_PLANE_WAVE
     use floatingtype_m, only : floatingtype_t, read_floatingtype => read, &

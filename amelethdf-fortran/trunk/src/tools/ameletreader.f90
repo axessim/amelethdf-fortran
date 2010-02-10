@@ -58,8 +58,8 @@ program ameletreader
     if (allocated(children_name)) deallocate(children_name)
     call read_children_name(file_id, C_SIMULATION, children_name)
     do i=1, size(children_name)
-        call readSimulation(file_id, C_SIMULATION//trim(children_name(i)), sim)
-        call printSimulation(sim)
+        call read_simulation(file_id, C_SIMULATION//trim(children_name(i)), sim)
+        call print_simulation(sim)
     enddo
 
     ! Meshes
