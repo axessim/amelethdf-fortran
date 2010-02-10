@@ -11,8 +11,6 @@ module hdfpath_m
 
     contains
         function basename(path)
-            implicit none
-            
             character(len=*), intent(in) :: path
             character(len=len(path)) :: basename
             character(len=len(path)), dimension(2) :: buf
@@ -22,8 +20,6 @@ module hdfpath_m
         end function basename
 
         function dirname(path)
-            implicit none
-            
             character(len=*), intent(in) :: path
             character(len=len(path)) :: dirname
             character(len=len(path)), dimension(2) :: buf
@@ -34,8 +30,6 @@ module hdfpath_m
 
         ! Returns true if path exists in loc_id
         function exists(loc_id, path) result(link_exists)
-            implicit none
-            
             integer(hid_t), intent(in) :: loc_id
             character(len=*), intent(in) :: path
             logical :: link_exists
@@ -46,8 +40,6 @@ module hdfpath_m
 
         ! returns true if path is obsolute
         logical function isabs(path)
-            implicit none
-            
             character(len=*), intent(in) :: path
 
             isabs = .false.
@@ -56,8 +48,6 @@ module hdfpath_m
 
         ! returns the type of the path object
         integer function gettype(loc_id, path)
-            implicit none
-
             integer(hid_t), intent(in) :: loc_id
             character(len=*), intent(in) :: path
 
@@ -76,8 +66,6 @@ module hdfpath_m
 
         ! closes an opened object
         subroutine closetype(object_id)
-            implicit none
-
             integer(hid_t), intent(in) :: object_id
             integer :: object_type
 
@@ -95,8 +83,6 @@ module hdfpath_m
 
         ! returns true if path is a leaf (table, dataset)
         logical function isleaf(loc_id, path)
-            implicit none
-            
             integer(hid_t), intent(in) :: loc_id
             character(len=*), intent(in) :: path
             
@@ -118,8 +104,6 @@ module hdfpath_m
         ! remove separator '/' from the start and the end of string
         ! for "foo/bar/" returns "foo/bar"
         function remove_sep(path, begin)
-            implicit none
-
             character(len=*), intent(in) :: path
             logical, optional, intent(in) :: begin
             character(len=len(path)) :: remove_sep
@@ -161,8 +145,6 @@ module hdfpath_m
         ! joins paths of an array of path
         ! for ["/foo", "bar"] returns "/foo/bar"
         function join(paths, sep_)
-            implicit none
-            
             character(len=*), dimension(:), intent(in) :: paths
             character(len=size(paths)*len(paths)) :: join
             character, intent(in), optional :: sep_
@@ -185,8 +167,6 @@ module hdfpath_m
         ! rsplits a path and return the dirname and the basename
         ! for "/foo/bar/baz" returns "/foo/bar" and "baz"
         function rsplit(path)
-            implicit none
-            
             character(len=*), intent(in) :: path
             character(len=len(path)), dimension(2) :: rsplit
             
@@ -200,8 +180,6 @@ module hdfpath_m
         ! lsplits a path and return the dirname and the basename
         ! for "/foo/bar/baz" returns "/foo" and "bar/baz"
         function lsplit(path)
-            implicit none
-
             character(len=*), intent(in) :: path
             character(len=len(path)), dimension(2) :: lsplit
 
@@ -222,8 +200,6 @@ module hdfpath_m
         ! splits a path and return the first element path
         ! for "/foo/bar/" returns "foo"
         function head(path)
-            implicit none
-
             character(len=*), intent(in) :: path
             character(len=len(path)) :: head
 
@@ -236,8 +212,6 @@ module hdfpath_m
         ! returns true is subpath is in path
         ! for "/foo/bar" & "/foo" returns true
         logical function contain(path, subpath)
-            implicit none
-
             character(len=*), intent(in) :: path, subpath
 
             integer :: i = 0
