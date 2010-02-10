@@ -97,7 +97,8 @@ program write_an_output_file
 
     implicit none
 
-    integer(hid_t) :: file_id, grp_id
+    integer :: i, j
+    integer(hid_t) :: file_id, grp_id, grp2_id
     character(len=AL) :: command_line_buffer
     character(len=AL) :: filename, path
     integer(hsize_t), dimension(:), allocatable :: dims
@@ -106,6 +107,15 @@ program write_an_output_file
     real, dimension(10) :: dim1, dim2
     character(len=AL) :: label, physical_nature, unit, comment
     character(len=AL), dimension(:), allocatable :: outputs
+
+    ! Data initialization
+    do i=1, size(dim1)
+        dim1(i) = 10.0*i
+        do j=1, size(dim2)
+            dim2 = 12.0*j
+            data = i**2 + j**2
+        enddo
+    enddo
 
     ! HDF5 library initialization
     call h5open_f(hdferr)
