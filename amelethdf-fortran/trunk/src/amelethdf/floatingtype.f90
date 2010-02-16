@@ -159,20 +159,29 @@ contains
         character(len=*), intent(in) :: path
         character(len=*), intent(in) :: label, physical_nature, unit, comment
 
-        call h5ltset_attribute_string_f(file_id, trim(path), "label", &
-                                        trim(label), hdferr)
-        call check("Can't write label for "//path)
+        if (len(trim(label)) /= 0) then
+            call h5ltset_attribute_string_f(file_id, trim(path), "label", &
+                                            trim(label), hdferr)
+            call check("Can't write label for "//path)
+        endif
 
-        call h5ltset_attribute_string_f(file_id, trim(path), "physicalNature", &
-                                        trim(physical_nature), hdferr)
-        call check("Can't write physical nature for "//path)
+        if (len(trim(physical_nature)) /= 0) then
+            call h5ltset_attribute_string_f(file_id, trim(path), &
+                                            "physicalNature", &
+                                            trim(physical_nature), hdferr)
+            call check("Can't write physical nature for "//path)
+        endif
 
-        call h5ltset_attribute_string_f(file_id, trim(path), "unit", &
-                                        trim(unit), hdferr)
-        call check("Can't write unit for "//path)
+        if (len(trim(unit)) /= 0) then
+            call h5ltset_attribute_string_f(file_id, trim(path), "unit", &
+                                            trim(unit), hdferr)
+            call check("Can't write unit for "//path)
+        endif
 
-        call h5ltset_attribute_string_f(file_id, trim(path), "comment", &
-                                        trim(comment), hdferr)
-        call check("Can't write comment for "//path)
+        if (len(trim(comment)) /= 0) then
+            call h5ltset_attribute_string_f(file_id, trim(path), "comment", &
+                                            trim(comment), hdferr)
+            call check("Can't write comment for "//path)
+        endif
     end subroutine set_floating_type
 end module floatingtype_m
