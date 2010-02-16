@@ -10,6 +10,8 @@ module hdfpath_m
 
 
     contains
+        ! Returns the name of the leaf
+        ! With /foo/bar/baz returns baz
         function basename(path)
             character(len=*), intent(in) :: path
             character(len=len(path)) :: basename
@@ -19,6 +21,8 @@ module hdfpath_m
             basename = buf(2)
         end function basename
 
+        ! Returns the name of the parent director
+        ! With /foo/bar/baz returns /foo/bar
         function dirname(path)
             character(len=*), intent(in) :: path
             character(len=len(path)) :: dirname
@@ -156,7 +160,7 @@ module hdfpath_m
                sep = sep_
             else
                sep = "/"
-            end if
+            endif
 
             join = trim(remove_sep(paths(1), .true.))
             do i=2,size(paths)
