@@ -96,8 +96,6 @@ module hdfpath_m
 
         ! returns true if path is a group
         logical function isgroup(loc_id, path)
-            implicit none
-
             integer(hid_t), intent(in) :: loc_id
             character(len=*), intent(in) :: path
 
