@@ -11,6 +11,7 @@ module amelethdf_m
 
     contains
         subroutine check(message, must_stop)
+            ! the printed message
             character(len=*) :: message
             logical, intent(in), optional :: must_stop
             logical :: must_stop1
@@ -77,7 +78,10 @@ module amelethdf_m
         ! Reads a string attribute, it can be mandatory
         function read_attribute(file_id, path, attr, buf, mandatory) result(here)
             integer(hid_t), intent(in) :: file_id
-            character(len=*), intent(in) :: path, attr
+            character(len=*), intent(in) :: path
+            ! the name of the attribute
+            character(len=*), intent(in) :: attr
+            ! the returned value
             character(len=*), intent(inout) :: buf
             logical, intent(in), optional :: mandatory
 
@@ -109,7 +113,10 @@ module amelethdf_m
         function read_float_attribute(file_id, path, attr, buf, mandatory) &
         result(here)
             integer(hid_t), intent(in) :: file_id
-            character(len=*), intent(in) :: path, attr
+            character(len=*), intent(in) :: path
+            ! the name of the attribute
+            character(len=*), intent(in) :: attr
+            ! the value of the attribute
             real, intent(inout) :: buf
             logical, intent(in), optional :: mandatory
 
@@ -133,12 +140,15 @@ module amelethdf_m
             endif
         end function read_float_attribute
 
-        ! Reads a float attribute, it can be mandatory
+        ! Reads a integer attribute, it can be mandatory
         function read_int_attribute(file_id, path, attr, buf, mandatory) &
             result(here)
 
             integer(hid_t), intent(in) :: file_id
-            character(len=*), intent(in) :: path, attr
+            ! the name of the attribute
+            character(len=*), intent(in) :: path
+            ! the value of the attribute
+            character(len=*), intent(in) :: attr
             integer, intent(inout) :: buf
             logical, intent(in), optional :: mandatory
 
