@@ -28,8 +28,6 @@ module mesh_m
     contains
         ! Return the type of a mesh
         function mtype(file_id, path)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             integer :: mtype
@@ -50,8 +48,6 @@ module mesh_m
         end function mtype
 
         function isstructured(file_id, path)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
 
@@ -65,8 +61,6 @@ module mesh_m
 
         ! Reads a groupgroup
         subroutine read_groupgroup(file_id, path, group)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(groupgroup_t), intent(inout) :: group
@@ -85,8 +79,6 @@ module mesh_m
 
         ! Prints a groupgroup to the console
         subroutine print_groupgroup(group)
-            implicit none
-
             type(groupgroup_t), intent(in) :: group
 
             integer :: i
