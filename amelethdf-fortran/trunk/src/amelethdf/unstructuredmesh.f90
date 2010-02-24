@@ -22,13 +22,13 @@ module unstructuredmesh_m
     character(len=*), parameter :: ELEMENT_NODES = "/elementNodes"
     character(len=*), parameter :: S_GROUP = "/group"
     character(len=*), parameter :: GROUPGROUP = "/groupGroup"
-    character(len=*), parameter :: SELECTOR_ON_MESH="/selectorOnMesh"
-    character(len=*), parameter :: TC_SHORTNAME="shortName"
-    character(len=*), parameter :: TC_INDEX="index"
-    character(len=*), parameter :: TC_V1="v1"
-    character(len=*), parameter :: TC_V2="v2"
-    character(len=*), parameter :: TC_V3="v3"
-    character(len=*), parameter :: L_ELEMENTS= "/elements"
+    character(len=*), parameter :: SELECTOR_ON_MESH = "/selectorOnMesh"
+    character(len=*), parameter :: TC_SHORTNAME = "shortName"
+    character(len=*), parameter :: TC_INDEX = "index"
+    character(len=*), parameter :: TC_V1 = "v1"
+    character(len=*), parameter :: TC_V2 = "v2"
+    character(len=*), parameter :: TC_V3 = "v3"
+    character(len=*), parameter :: L_ELEMENTS = "/elements"
 
     type selector_on_mesh_node_t
         character(len=EL), dimension(:), allocatable :: short_name
@@ -61,9 +61,8 @@ module unstructuredmesh_m
     end type unstructured_mesh_t
 
     contains
+        ! Reads an ustructured mesh
         subroutine read(file_id, mesh_path, umesh)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: mesh_path
             type(unstructured_mesh_t), intent(inout) :: umesh
@@ -166,8 +165,6 @@ module unstructuredmesh_m
 
         ! Reads an unstructured group
         subroutine read_group(file_id, path, group)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(group_t), intent(inout) :: group
@@ -209,8 +206,6 @@ module unstructuredmesh_m
         ! shortName is an EL string
         ! index is an integer
         subroutine read_selector_on_mesh_node(file_id, path, somn)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(selector_on_mesh_node_t), intent(inout) :: somn
@@ -273,8 +268,6 @@ module unstructuredmesh_m
         ! index is an integer
         ! v1, v2, v3 are real
         subroutine read_selector_on_mesh_element(file_id, path, some)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(selector_on_mesh_element_t), intent(inout) :: some
@@ -356,8 +349,6 @@ module unstructuredmesh_m
 
         ! Prints an unstructured mesh to the console
         subroutine printt(umesh)
-            implicit none
-
             type(unstructured_mesh_t), intent(in) :: umesh
 
             integer :: i, offset = 1

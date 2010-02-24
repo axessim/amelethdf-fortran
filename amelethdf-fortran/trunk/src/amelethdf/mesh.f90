@@ -47,6 +47,7 @@ module mesh_m
             end if
         end function mtype
 
+        ! Returns true is path is a structured mesh
         function isstructured(file_id, path)
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path

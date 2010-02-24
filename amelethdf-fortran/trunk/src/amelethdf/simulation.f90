@@ -41,9 +41,8 @@ module simulation_m
 !            end do
 !        end subroutine read
 
+        ! Reads a simulation
         subroutine read(file_id, sim_path, sim)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: sim_path
             type(simulation_t), intent(inout) :: sim
@@ -63,8 +62,6 @@ module simulation_m
 
         ! Read n x 1 string dataset
         subroutine read_dataset(file_id, path, dataset)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             character(len=*), dimension(:), allocatable, intent(inout) :: dataset
@@ -85,9 +82,7 @@ module simulation_m
 
         ! Print a simulation
         subroutine printt(sim)
-            implicit none
-
-            type(simulation_t), intent(inout) :: sim
+            type(simulation_t), intent(in) :: sim
 
             integer :: i
 
