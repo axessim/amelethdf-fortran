@@ -31,10 +31,8 @@ module planewave_m
     end type planewave_t
 
     contains
-        ! read a planewave_t
+        ! read a planewave
         subroutine read(file_id, path, pw)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(planewave_t), intent(inout) :: pw
@@ -83,18 +81,15 @@ module planewave_m
             call clear_content_floatingtype(planewave%magnitude)
         end subroutine clear_content
 
-        ! helper functions
+        ! Returns .true. if planewave polarization is LINEAR
         logical function islinear(planewave)
-            implicit none
-
             type(planewave_t), intent(in) :: planewave
 
             islinear = (planewave%polarization == LINEAR)
         end function islinear
 
+        ! Returns .true. if planewave polarization is ELLIPTIC
         logical function iselliptic(planewave)
-            implicit none
-
             type(planewave_t), intent(in) :: planewave
 
             iselliptic = (planewave%polarization == ELLIPTIC)

@@ -55,8 +55,8 @@ module complextype_m
             call check(MSIG//"Can 't commit complex type id")
         end subroutine write_complex_type
 
-        ! create a complex attribute in path
-        subroutine create_attribute(file_id, path, name, value)
+        ! Writes a complex attribute at path
+        subroutine write_attribute(file_id, path, name, value)
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             character(len=*), intent(in) :: name
@@ -114,7 +114,7 @@ module complextype_m
             endif
         end function read_attribute
 
-       ! Read a complex dataset
+        ! Read a complex dataset
         subroutine read_dataset(file_id, path, values)
             use h5lt
 
@@ -150,7 +150,7 @@ module complextype_m
             deallocate(dims, buf)
         end subroutine read_dataset
 
-       ! Write a 1D complex dataset
+        ! Write a 1D complex dataset
         subroutine write_dataset(file_id, path, values)
             use h5lt
 
@@ -209,7 +209,7 @@ module complextype_m
             call h5sclose_f(dataspace_id, hdferr)
         end subroutine write_dataset
 
-       ! Write a nD complex dataset
+        ! Write a nD complex dataset
         subroutine write_nd_dataset(file_id, path, values, values_shape)
             use h5lt
 

@@ -22,8 +22,6 @@ module vector_m
     contains
         ! read a vector_t floating type
         subroutine read(file_id, path, vector)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(vector_t), intent(inout) :: vector
@@ -60,8 +58,6 @@ module vector_m
 
         ! clear vector
         subroutine clear_content(vector)
-            implicit none
-
             type(vector_t), intent(inout) :: vector
 
             call clear_content_single(vector%single)
@@ -72,8 +68,6 @@ module vector_m
 
         ! return a string representation of vector_t
         character(len=250) function to_string(vector)
-            implicit none
-
             type(vector_t), intent(in) :: vector
 !            character(len=200) :: buf = ""
 

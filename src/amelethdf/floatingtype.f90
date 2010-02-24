@@ -102,7 +102,7 @@ contains
 
     ! Series of test functions
 
-    ! Return .true. if the input is a float number
+    ! Returns.true. if the input is a float number
     logical function issinglereal(ft)
         type(floatingtype_t), intent(in) :: ft
 
@@ -116,7 +116,7 @@ contains
         issinglecomplex = (ft%floatingtype == E_SINGLE_COMPLEX)
     end function issinglecomplex
 
-    ! Return .true. if the input is a vector
+    ! Returns .true. if the input is a vector
     logical function isvector(ft)
         type(floatingtype_t), intent(in) :: ft
 

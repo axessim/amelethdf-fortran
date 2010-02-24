@@ -37,8 +37,6 @@ module structuredmesh_m
     contains
         ! Reads a structured mesh and store the result in smesh
         subroutine read(file_id, mesh_path, smesh)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: mesh_path
             type(structured_mesh_t), intent(inout) :: smesh
@@ -92,8 +90,6 @@ module structuredmesh_m
 
         ! Read an axis of a structured mesh
         subroutine read_axis(file_id, parent, xyz, buf)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: xyz
             character(len=*), intent(in) :: parent
@@ -124,9 +120,8 @@ module structuredmesh_m
             enddo
         end subroutine read_axis
 
+        ! Print to the console smesh characteristics
         subroutine printt(smesh)
-            implicit none
-
             type(structured_mesh_t), intent(in) :: smesh
 
             integer :: i
@@ -147,8 +142,6 @@ module structuredmesh_m
 
         ! Reads a structured group
         subroutine read_group(file_id, path, group)
-            implicit none
-
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(group_t), intent(inout) :: group

@@ -25,8 +25,6 @@ module linkoutputrequest_m
     contains
         ! Reads a (subject/object) of link/outputRequest
         subroutine read(loc_id, path, link)
-            implicit none
-
             integer(hid_t), intent(in) :: loc_id
             character(len=*), intent(in) :: path
             type(link_t), intent(inout) :: link
@@ -39,8 +37,6 @@ module linkoutputrequest_m
 
         ! Return the type of link
         integer function get_type(link)
-            implicit none
-
             type(link_t), intent(in) :: link
 
             if (like(link%subject, "/physicalModel/conductingMaterial") .or. &
@@ -56,10 +52,8 @@ module linkoutputrequest_m
             endif
         end function get_type
 
-        ! Helper functions
+        ! Returns .true. if link is a DATA_ON_MESH
         logical function isdataonmesh(link)
-            implicit none
-
             type(link_t), intent(in) :: link
 
             isdataonmesh = (get_type(link) == DATA_ON_MESH)

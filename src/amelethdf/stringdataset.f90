@@ -58,6 +58,7 @@ module stringdataset_m
             get_dataset_lmn = (/type_size, m, n/)
         end function get_dataset_lmn
 
+        ! Read a 1D string vector
         subroutine read_vector(file_id, path, vector)
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
@@ -91,7 +92,7 @@ module stringdataset_m
             enddo
         end function str_index
 
-       ! Write a nd string dataset
+        ! Write a nd string dataset
         subroutine write_nd_dataset(file_id, path, values, values_shape)
             use h5lt
 

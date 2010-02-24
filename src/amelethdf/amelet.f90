@@ -8,7 +8,7 @@ module amelethdf
                             read_int_attribute
     use category_m, only : C_ELECTROMAGNETIC_SOURCE, C_GLOBAL_ENVIRONMENT, &
                            C_LABEL
-    use mesh_m, only : C_MESH, mesh_names, isStructured
+    use mesh_m, only : C_MESH, isstructured
     use unstructuredmesh_m, only : umesh_read => read, &
                                    umesh_print => printt, &
                                    unstructured_mesh_t, &
@@ -37,9 +37,11 @@ module amelethdf
     use arrayset_m, only : arrayset_t, read_arrayset => read, &
                            arrayset_to_string => to_string2
     use physicalmodel_m, only : C_PHYSICAL_MODEL
-    use complextype_m, only : create_attribute, read_cattribute, &
-                            write_complex_type, read_attribute, &
-                            write_complex_dataset => write_nd_dataset
+    use complextype_m, only : write_complex_attribute => write_attribute, &
+                              read_complex_attribute => read_attribute, &
+                              write_complex_type, &
+                              write_complex_dataset => write_nd_dataset, &
+                              read_1d_complex_dataset => read_dataset
     use hdfpath_m, only : basename, dirname, exists, isleaf, isgroup, like, join
     use planewave_m, only : planewave_t, read_planewave => read, &
                             islinear, iselliptic, C_PLANE_WAVE
