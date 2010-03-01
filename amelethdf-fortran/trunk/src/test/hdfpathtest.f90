@@ -143,9 +143,9 @@ program hdfpathtest
     print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
     path_array = (/"/foo/bar/", "/baz/    "/)
     print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
-    path_array = (/"/a/bb/", "/a/bb/ccc    "/)
+    path_array = (/"/a/bb/       ", "/a/bb/ccc    "/)
     print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
-    path_array = (/"/aaa/", "/ccccccc    "/)
+    path_array = (/"/aaa/       ", "/ccccccc    "/)
     print *, "join : ", trim(path_array(1)), " & ", trim(path_array(2)), " : " , trim(join(path_array))
 
     print *
