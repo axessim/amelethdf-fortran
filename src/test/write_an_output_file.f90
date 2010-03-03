@@ -57,12 +57,14 @@ module tools
         integer :: rank
         integer(hsize_t), dimension(1) :: dims
         integer(hid_t) :: space_id, dset_id, str_type_id
+        integer(size_t) :: buf_size
 
         rank = 1
         dims = size(buf)
+        buf_size = len(buf)
         call h5screate_simple_f(rank, dims, space_id, hdferr)
         call h5tcopy_f(H5T_NATIVE_CHARACTER, str_type_id, hdferr)
-        call H5tset_size_f(str_type_id, len(buf), hdferr);
+        call H5tset_size_f(str_type_id, buf_size, hdferr);
         call h5dcreate_f(file_id, path, str_type_id, space_id, dset_id, hdferr)
         call h5dwrite_f(dset_id, str_type_id, buf, dims, hdferr)
 
