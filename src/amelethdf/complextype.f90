@@ -14,7 +14,9 @@ module complextype_m
             integer(hid_t), intent(in) :: real_or_double
             integer(hid_t), intent(out) :: type_id
 
-            integer(size_t) :: type_size, two_type_size
+            integer(size_t) :: type_size, two_type_size, offset
+
+            offset = 0
 
             call h5tget_size_f(real_or_double, type_size, hdferr)
             call check(MSIG//"Can 't get size")
@@ -22,7 +24,7 @@ module complextype_m
             call h5tcreate_f(H5T_COMPOUND_F, two_type_size, &
                              type_id, hdferr)
             call check(MSIG//"Can 't create type id")
-            call h5tinsert_f(type_id, "r", 0, real_or_double, hdferr)
+            call h5tinsert_f(type_id, "r", offset, real_or_double, hdferr)
             call check(MSIG//"Can 't insert 'r' type id")
             call h5tinsert_f(type_id, "i", type_size, real_or_double, hdferr)
             call check(MSIG//"Can 't insert 'i' type id")
@@ -162,8 +164,10 @@ module complextype_m
             integer :: rank = 1
             integer(hsize_t), dimension(1) :: dims
             integer(hid_t) :: dataspace_id, dset_id, dtr_id, dti_id
-            integer(size_t) :: type_size
+            integer(size_t) :: type_size, offset
             integer(hid_t) :: type_id
+
+            offset = 0
 
             call create_type_ids()
             type_id = real_type_id
@@ -186,13 +190,13 @@ module complextype_m
             call h5tcreate_f(H5T_COMPOUND_F, type_size, dtr_id, hdferr)
             call check(MSIG1//"Can't create real data type")
 !            call h5tinsert_f(dtr_id, "r", 0, type_id, hdferr)
-            call h5tinsert_f(dtr_id, "r", 0, H5T_NATIVE_REAL, hdferr)
+            call h5tinsert_f(dtr_id, "r", offset, H5T_NATIVE_REAL, hdferr)
             call check(MSIG1//"Can't insert real part")
 
             call h5tcreate_f(H5T_COMPOUND_F, type_size, dti_id, hdferr)
             call check(MSIG1//"Can't create imaginary data type")
 !            call h5tinsert_f(dti_id, "i", 0, type_id, hdferr)
-            call h5tinsert_f(dti_id, "i", 0, H5T_NATIVE_REAL, hdferr)
+            call h5tinsert_f(dti_id, "i", offset, H5T_NATIVE_REAL, hdferr)
              call check(MSIG1//"Can't insert imaginary part")
 
             ! Write data
@@ -222,8 +226,10 @@ module complextype_m
             integer :: rank
             integer(hsize_t), dimension(:), allocatable :: dims
             integer(hid_t) :: dataspace_id, dset_id, dtr_id, dti_id
-            integer(size_t) :: type_size
+            integer(size_t) :: offset, type_size
             integer(hid_t) :: type_id
+
+            offset = 0
 
             call create_type_ids()
             type_id = real_type_id
@@ -248,12 +254,12 @@ module complextype_m
 
             call h5tcreate_f(H5T_COMPOUND_F, type_size, dtr_id, hdferr)
             call check(MSIG1//"Can't create real data type")
-            call h5tinsert_f(dtr_id, "r", 0, H5T_NATIVE_REAL, hdferr)
+            call h5tinsert_f(dtr_id, "r", offset, H5T_NATIVE_REAL, hdferr)
             call check(MSIG1//"Can't insert real part")
 
             call h5tcreate_f(H5T_COMPOUND_F, type_size, dti_id, hdferr)
             call check(MSIG1//"Can't create imaginary data type")
-            call h5tinsert_f(dti_id, "i", 0, H5T_NATIVE_REAL, hdferr)
+            call h5tinsert_f(dti_id, "i", offset, H5T_NATIVE_REAL, hdferr)
             call check(MSIG1//"Can't insert imaginary part")
 
             ! Write data
