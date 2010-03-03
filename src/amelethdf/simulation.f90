@@ -76,7 +76,8 @@ module simulation_m
             call check("\nCan't read the number of inputs for "//path)
             m = dims(1); n= 1
             allocate(dataset(m))
-            call read_string_dataset1(file_id, path, dataset, type_size, m, 1)
+            call read_string_dataset1(file_id, path, dataset, &
+                                      int(type_size), m, 1)
             call trim_null_char(dataset)
         end subroutine read_dataset
 
