@@ -55,7 +55,7 @@ module stringdataset_m
             call check(MSIG//"Can't read string length for : "//path)
             m = dims(1)
             n = dims(2)
-            get_dataset_lmn = (/type_size, m, n/)
+            get_dataset_lmn = (/int(type_size), m, n/)
         end function get_dataset_lmn
 
         ! Read a 1D string vector
@@ -110,12 +110,13 @@ module stringdataset_m
             integer(hid_t) :: type_id
 
             rank = size(values_shape)
+            type_size = len(values)
 
             allocate(dims(rank))
             dims = values_shape
 
             call h5tcopy_f(H5T_NATIVE_CHARACTER, type_id, hdferr)
-            call H5tset_size_f(type_id, len(values), hdferr);
+            call H5tset_size_f(type_id, type_size, hdferr);
             call check(MSIG1//"Can't get type size")
 
             ! Create the dataspace
