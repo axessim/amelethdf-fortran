@@ -4,7 +4,9 @@ FILE(GLOB amelethdf_src *.f90)
 
 ADD_LIBRARY(amelethdf_so SHARED ${amelethdf_src})
 SET_TARGET_PROPERTIES( amelethdf_so  PROPERTIES OUTPUT_NAME "amelethdff")
-INSTALL(TARGETS amelethdf_so LIBRARY DESTINATION "lib")
+INSTALL(TARGETS amelethdf_so LIBRARY DESTINATION "lib"
+                             ARCHIVE DESTINATION "lib"
+                             RUNTIME DESTINATION "bin")
 
 ADD_LIBRARY(amelethdf STATIC ${amelethdf_src})
 SET_TARGET_PROPERTIES( amelethdf  PROPERTIES OUTPUT_NAME "amelethdff")
