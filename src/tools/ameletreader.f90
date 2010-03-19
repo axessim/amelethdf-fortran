@@ -55,8 +55,7 @@ program ameletreader
     ! Simulations
     print *
     print *, "Reading simulation ..."
-    if (allocated(children_name)) deallocate(children_name)
-    call read_children_name(file_id, C_SIMULATION, children_name)
+    call allocate_children_name(file_id, C_SIMULATION, children_name)
     do i=1, size(children_name)
         call read_simulation(file_id, C_SIMULATION//trim(children_name(i)), sim)
         call print_simulation(sim)
@@ -64,8 +63,7 @@ program ameletreader
 
     ! Meshes
     print *, "\nReading Mesh ..."
-    if (allocated(children_name)) deallocate(children_name)
-    call read_children_name(file_id, C_MESH, children_name)
+    call allocate_children_name(file_id, C_MESH, children_name)
     do i=1, size(children_name)
         path = trim(C_MESH//children_name(i))
         print *, "Mesh group : ", path
@@ -93,8 +91,7 @@ program ameletreader
     ! Physical Models
     print *
     print *, "Reading Physical models ..."
-    if (allocated(children_name)) deallocate(children_name)
-    call read_children_name(file_id, C_PHYSICAL_MODEL, children_name)
+    call allocate_children_name(file_id, C_PHYSICAL_MODEL, children_name)
     do i=1, size(children_name)
         print *, "Physical models : ", children_name(i)
     enddo
@@ -102,8 +99,7 @@ program ameletreader
     ! Electromagnetic sources
     print *
     print *, "Reading Electromagnetic Sources ..."
-    if (allocated(children_name)) deallocate(children_name)
-    call read_children_name(file_id, C_ELECTROMAGNETIC_SOURCE, children_name)
+    call allocate_children_name(file_id, C_ELECTROMAGNETIC_SOURCE, children_name)
     do i=1, size(children_name)
         path = trim(C_ELECTROMAGNETIC_SOURCE)//trim(children_name(i))
         print *, "Electromagnetic Sources : ", trim(path)
@@ -127,8 +123,7 @@ program ameletreader
     ! Global environment
     print *
     print *, "Reading global environment ..."
-    if (allocated(children_name)) deallocate(children_name)
-    call read_children_name(file_id, C_GLOBAL_ENVIRONMENT, children_name)
+    call allocate_children_name(file_id, C_GLOBAL_ENVIRONMENT, children_name)
     do i=1, size(children_name)
         path = trim(C_GLOBAL_ENVIRONMENT)//trim(children_name(i))
         print *, "Global environment : ", trim(path)
@@ -139,8 +134,7 @@ program ameletreader
     ! Label
     print *
     print *, "Reading label ..."
-    if (allocated(children_name)) deallocate(children_name)
-    call read_children_name(file_id, C_LABEL, children_name)
+    call allocate_children_name(file_id, C_LABEL, children_name)
     do i=1, size(children_name)
         path = trim(C_LABEL)//trim(children_name(i))
         if (allocated(children_name2)) deallocate(children_name2)
@@ -151,8 +145,7 @@ program ameletreader
     ! Link
     print *
     print *, "Reading links ..."
-    if (allocated(children_name)) deallocate(children_name)
-    call read_children_name(file_id, C_LINK, children_name)
+    call allocate_children_name(file_id, C_LINK, children_name)
     do i=1, size(children_name)
         path = trim(C_LINK)//trim(children_name(i))
         print *, "Link group : ", trim(path)
@@ -171,8 +164,7 @@ program ameletreader
     ! Output request
     print *
     print *, "Reading output request ..."
-    if (allocated(children_name)) deallocate(children_name)
-    call read_children_name(file_id, C_OUTPUT_REQUEST, children_name)
+    call allocate_children_name(file_id, C_OUTPUT_REQUEST, children_name)
     do i=1, size(children_name)
         path = trim(C_OUTPUT_REQUEST)//trim(children_name(i))
         print *, "Output request group : ", trim(path)
@@ -190,4 +182,18 @@ program ameletreader
     call h5fclose_f(file_id, hdferr)
 
     print *, "End"
+
+contains
+    subroutine allocate_children_name(file_id, path, children_name)
+        integer(hid_t) :: file_id
+        character(len=*) :: path
+        character(len=*), dimension(:), allocatable :: children_name
+
+        if (allocated(children_name)) deallocate(children_name)
+        if (exists(file_id, path)) then
+            call read_children_name(file_id, path, children_name)
+        else
+            allocate(children_name(0))
+        endif
+    end subroutine allocate_children_name
 end program ameletreader
