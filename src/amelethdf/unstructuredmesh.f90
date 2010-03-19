@@ -90,7 +90,7 @@ module unstructuredmesh_m
             allocate(umesh%nodes(two_dims(1), two_dims(2)))
             call h5ltread_dataset_float_f(file_id, path, umesh%nodes, &
                                           two_dims, hdferr)
-            call check(MSIG//"Can't read the nodes' coordinates for"//path)
+            call check(MSIG//"Can't read the nodes' coordinates for :"//path)
 
             ! number of elements
             path = ""
