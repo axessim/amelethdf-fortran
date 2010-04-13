@@ -161,20 +161,24 @@ module unstructuredmesh_m
                 enddo
             endif
 
-            ! selectorOnMesh/nodes
             path = ""
-            path = trim(mesh_path)//SELECTOR_ON_MESH//NODES
+            path = trim(mesh_path)//SELECTOR_ON_MESH
             if (exists(file_id, path)) then
-                call read_selector_on_mesh_node(file_id, trim(path), &
-                                                umesh%som_node)
-            endif
+                ! selectorOnMesh/nodes
+                path = ""
+                path = trim(mesh_path)//SELECTOR_ON_MESH//NODES
+                if (exists(file_id, path)) then
+                    call read_selector_on_mesh_node(file_id, trim(path), &
+                                                    umesh%som_node)
+                endif
 
-            ! selectorOnMesh/elements
-            path = ""
-            path = trim(mesh_path)//SELECTOR_ON_MESH//L_ELEMENTS
-            if (exists(file_id, path)) then
-                call read_selector_on_mesh_element(file_id, trim(path), &
-                                                   umesh%som_element)
+                ! selectorOnMesh/elements
+                path = ""
+                path = trim(mesh_path)//SELECTOR_ON_MESH//L_ELEMENTS
+                if (exists(file_id, path)) then
+                    call read_selector_on_mesh_element(file_id, trim(path), &
+                                                       umesh%som_element)
+                endif
             endif
         end subroutine read
 
@@ -198,7 +202,7 @@ module unstructuredmesh_m
                                             group%type, hdferr)
             call check(MSIG//"Can't read attribute : "//path//"@"//"type")
             group%entity_type = ""
-            if (group%type /= NODE_TYPE) then
+            if (group%type == ELEMENT_TYPE) then
                 call h5ltget_attribute_string_f(file_id, path, "entityType", &
                                                 group%entity_type, hdferr)
                 call check(MSIG//"Can't read attribute : "//path//"@"//"entityType")
