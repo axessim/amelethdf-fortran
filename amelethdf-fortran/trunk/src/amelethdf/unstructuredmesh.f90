@@ -73,78 +73,93 @@ module unstructuredmesh_m
             integer(hsize_t), dimension(1) :: one_dims
 
             integer :: i, n
-            character(len=AL) :: path = ""
-            character(len=AL) :: group_path = ""
+            character(len=AL) :: path
+            character(len=AL) :: group_path
             character(len=EL), dimension(:), allocatable :: group_name
 
             umesh%name = ""
             umesh%name = mesh_path
 
-            ! number of nodes
-            path = trim(mesh_path)//NODES
-            call h5ltget_dataset_info_f(file_id, path, two_dims, type_class, &
-                                        type_size, hdferr)
-            call check(MSIG//"Can't read the number of nodes for :"//path)
-
             ! nodes
-            allocate(umesh%nodes(two_dims(1), two_dims(2)))
-            call h5ltread_dataset_float_f(file_id, path, umesh%nodes, &
-                                          two_dims, hdferr)
-            call check(MSIG//"Can't read the nodes' coordinates for :"//path)
-
-            ! number of elements
             path = ""
-            path = trim(mesh_path)//ELEMENTS
-            call h5ltget_dataset_info_f(file_id, path, one_dims, type_class, &
-                                        type_size, hdferr)
-            call check(MSIG//"Can't read the number of elements for :"//path)
+            path = trim(mesh_path)//NODES
+            if (allocated(umesh%nodes)) deallocate(umesh%nodes)
+            if (exists(file_id, path)) then
+                ! number of nodes
+                call h5ltget_dataset_info_f(file_id, path, two_dims, &
+                                            type_class, type_size, hdferr)
+                call check(MSIG//"Can't read the number of nodes for :"//path)
+
+                ! nodes
+                allocate(umesh%nodes(two_dims(1), two_dims(2)))
+                call h5ltread_dataset_float_f(file_id, path, umesh%nodes, &
+                                              two_dims, hdferr)
+                call check(MSIG//"Can't read the nodes' coordinates for :"//path)
+            endif
 
             ! elements
-            allocate(umesh%elements(one_dims(1)))
-            call h5ltread_dataset_f(file_id, path, H5T_NATIVE_INTEGER_4, &
-                                    umesh%elements, one_dims, hdferr)
-            call check(MSIG//"Can't read the element's type for :"//path)
+            path = ""
+            path = trim(mesh_path)//ELEMENTS
+            if (allocated(umesh%elements)) deallocate(umesh%elements)
+            if (exists(file_id, path)) then
+                ! number of elements
+                call h5ltget_dataset_info_f(file_id, path, one_dims, &
+                                            type_class, type_size, hdferr)
+                call check(MSIG//"Can't read the number of elements for :"//path)
+
+                ! elements
+                allocate(umesh%elements(one_dims(1)))
+                call h5ltread_dataset_f(file_id, path, H5T_NATIVE_INTEGER_4, &
+                                        umesh%elements, one_dims, hdferr)
+                call check(MSIG//"Can't read the element's type for :"//path)
+            endif
 
             ! number of elements nodes
             path = ""
             path = trim(mesh_path)//ELEMENT_NODES
-            call h5ltget_dataset_info_f(file_id, path, one_dims, type_class, &
-                                        type_size, hdferr)
-            call check(MSIG//"Can't read the number of element nodes"//path)
+            if (allocated(umesh%element_nodes)) deallocate(umesh%element_nodes)
+            if (exists(file_id, path)) then
+                call h5ltget_dataset_info_f(file_id, path, one_dims, &
+                                            type_class, type_size, hdferr)
+                call check(MSIG//"Can't read the number of element nodes"//path)
 
-            ! elements
-            allocate(umesh%element_nodes(one_dims(1)))
-            call h5ltread_dataset_int_f(file_id, path, umesh%element_nodes, &
-                                        one_dims, hdferr)
-            call check(MSIG//"Can't read the element nodes"//path)
-
+                ! elements
+                allocate(umesh%element_nodes(one_dims(1)))
+                call h5ltread_dataset_int_f(file_id, path, umesh%element_nodes, &
+                                            one_dims, hdferr)
+                call check(MSIG//"Can't read the element nodes"//path)
+            endif
 
             ! groups
             path = ""
             path = trim(mesh_path)//S_GROUP
-            if (allocated(group_name)) deallocate(group_name)
-            call read_children_name(file_id, path, group_name)
-            n = size(group_name)
             if (allocated(umesh%groups)) deallocate(umesh%groups)
-            allocate(umesh%groups(n))
-            do i=1,n
-                group_path = trim(path)//"/"//trim(group_name(i))
-                call read_group(file_id, trim(group_path), umesh%groups(i))
-            end do
+            if (exists(file_id, path)) then
+                if (allocated(group_name)) deallocate(group_name)
+                call read_children_name(file_id, path, group_name)
+                n = size(group_name)
+                allocate(umesh%groups(n))
+                do i=1,n
+                    group_path = trim(path)//"/"//trim(group_name(i))
+                    call read_group(file_id, trim(group_path), umesh%groups(i))
+                enddo
+            endif
 
             ! groupGroups
             path = ""
             path = trim(mesh_path)//GROUPGROUP
-            if (allocated(group_name)) deallocate(group_name)
-            call read_children_name(file_id, path, group_name)
             if (allocated(umesh%groupgroups)) deallocate(umesh%groupgroups)
-            n = size(group_name)
-            allocate(umesh%groupgroups(n))
-            do i=1,n
-                group_path = trim(path)//"/"//trim(group_name(i))
-                call read_groupgroup(file_id, trim(group_path), &
-                                     umesh%groupgroups(i))
-            enddo
+            if (exists(file_id, path)) then
+                if (allocated(group_name)) deallocate(group_name)
+                call read_children_name(file_id, path, group_name)
+                n = size(group_name)
+                allocate(umesh%groupgroups(n))
+                do i=1,n
+                    group_path = trim(path)//"/"//trim(group_name(i))
+                    call read_groupgroup(file_id, trim(group_path), &
+                                         umesh%groupgroups(i))
+                enddo
+            endif
 
             ! selectorOnMesh/nodes
             path = ""
