@@ -62,29 +62,28 @@ program ameletreader
     enddo
 
     ! Meshes
-    print *, "\nReading Mesh ..."
+    print *
+    print *, "Reading Mesh ..."
     call allocate_children_name(file_id, C_MESH, children_name)
+    print *, "  Number of children : ", size(children_name)
     do i=1, size(children_name)
+        path = ""
         path = trim(C_MESH//children_name(i))
-        print *, "Mesh group : ", path
+        print *, "  Mesh group : ", trim(path), " ..."
         if (allocated(children_name2)) deallocate(children_name2)
         call read_children_name(file_id, path, children_name2)
+        print *, "    Number of children : ", size(children_name2)
         do j=1, size(children_name2)
-            path2 = path//"/"//trim(children_name2(i))
-            print *, "\nReading ", trim(path2), " ..."
-            if (allocated(children_name3)) deallocate(children_name3)
-            call read_children_name(file_id, path2, children_name3)
-            do k=1, size(children_name3)
-                path3 = trim(path2)//"/"//trim(children_name3(i))
-                print *, "\nReading ", trim(path3), " ..."
-                if (isStructured(file_id, trim(path3))) then
-                    call smesh_read(file_id, trim(path3), smesh)
-                    call smesh_print(smesh)
-                else
-                    call umesh_read(file_id, trim(path3), umesh)
-                    call umesh_print(umesh)
-                endif
-            enddo
+            path2 = ""
+            path2 = trim(path)//"/"//trim(children_name2(j))
+            print *, "    Mesh n°: ", j, ", ", trim(path2), " ..."
+            if (isStructured(file_id, trim(path2))) then
+                call smesh_read(file_id, trim(path2), smesh)
+                call smesh_print(smesh)
+            else
+                call umesh_read(file_id, trim(path2), umesh)
+                call umesh_print(umesh)
+            endif
         enddo
     enddo
 
