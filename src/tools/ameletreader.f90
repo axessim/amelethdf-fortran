@@ -20,6 +20,7 @@ program ameletreader
     type(simulation_t) :: sim
     type(structured_mesh_t) :: smesh
     type(unstructured_mesh_t) :: umesh
+    type(physicalvolume_t) :: pv
     type(planewave_t) :: pw
     type(floatingtype_t) :: ft
     type(link_t) :: link
@@ -90,9 +91,29 @@ program ameletreader
     ! Physical Models
     print *
     print *, "Reading Physical models ..."
-    call allocate_children_name(file_id, C_PHYSICAL_MODEL, children_name)
+    print *, "Reading physical volume models ..."
+    call allocate_children_name(file_id, C_PHYSICAL_VOLUME, children_name)
     do i=1, size(children_name)
-        print *, "Physical models : ", children_name(i)
+        path = trim(C_PHYSICAL_VOLUME)//trim(children_name(i))
+        print *, "Physical volume models : ", children_name(i)
+        call physicalvolume_read(file_id, trim(path), pv)
+        if (issinglecomplex(pv%relative_permittivity)) then
+            print *, "  Relative permittivity :", trim( &
+                singlecomplex_to_string(pv%relative_permittivity%singlecomplex))
+        endif
+        if (issinglecomplex(pv%relative_permeability)) then
+            print *, "  Relative permittivity :", trim( &
+                singlecomplex_to_string(pv%relative_permeability%singlecomplex))
+        endif
+        if (issinglereal(pv%electric_conductivity)) then
+            print *, "  Electric conductivy  : ", trim( &
+                singlereal_to_string(pv%electric_conductivity%singlereal))
+        endif
+        if (issinglereal(pv%magnetic_conductivity)) then
+            print *, "  Magnetic conductivy  : ", trim( &
+                singlereal_to_string(pv%magnetic_conductivity%singlereal))
+        endif
+        call physicalvolume_clear_content(pv)
     enddo
 
     ! Electromagnetic sources
