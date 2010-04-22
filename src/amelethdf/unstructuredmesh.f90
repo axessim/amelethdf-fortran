@@ -4,7 +4,8 @@ module unstructuredmesh_m
     use amelethdf_m, only : check, hdferr, &
                             EL => ELEMENT_NAME_LENGTH, &
                             AL => ABSOLUTE_PATH_NAME_LENGTH, &
-                            read_children_name, trim_null_char
+                            read_children_name, trim_null_char, &
+                            read_attribute
     use mesh_m, only : groupgroup_t, print_groupgroup, read_groupgroup
     use hdfpath_m, only : exists, join
 
@@ -191,6 +192,7 @@ module unstructuredmesh_m
             integer(hsize_t), dimension(1) :: dims
             integer :: type_class
             integer(size_t) :: type_size
+            logical :: here
 
             ! Name setting
             group%name = ""
@@ -198,14 +200,11 @@ module unstructuredmesh_m
 
             ! type attribute
             group%type = ""
-            call h5ltget_attribute_string_f(file_id, path, "type", &
-                                            group%type, hdferr)
-            call check(MSIG//"Can't read attribute : "//path//"@"//"type")
+            here = read_attribute(file_id, path, "type", group%type)
             group%entity_type = ""
             if (group%type == ELEMENT_TYPE) then
-                call h5ltget_attribute_string_f(file_id, path, "entityType", &
-                                                group%entity_type, hdferr)
-                call check(MSIG//"Can't read attribute : "//path//"@"//"entityType")
+                here = read_attribute(file_id, path, "entityType", &
+                                      group%entity_type)
             endif
 
             ! dataset info
