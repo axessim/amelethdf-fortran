@@ -36,7 +36,7 @@ program converttorealvectortest
         print *, "Error, vd /= 11.5"
     endif
     print *, "Ok, convert_to_real_vector by pointer test."
-
+    deallocate(vd)
 
     if (allocated(vd1)) then
         print *, "Error, vd1 should not be allocated"
