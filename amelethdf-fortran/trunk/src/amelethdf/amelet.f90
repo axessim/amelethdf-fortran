@@ -36,7 +36,10 @@ module amelethdf
                          vector_clear_content => clear_content
     use arrayset_m, only : arrayset_t, read_arrayset => read, &
                            arrayset_to_string => to_string2
-    use physicalmodel_m, only : C_PHYSICAL_MODEL
+    use physicalmodel_m, only : C_PHYSICAL_MODEL, C_PHYSICAL_VOLUME, &
+                                physicalvolume_t, &
+                                physicalvolume_read => read, &
+                                physicalvolume_clear_content => clear_content
     use complextype_m, only : write_complex_attribute => write_attribute, &
                               read_complex_attribute => read_attribute, &
                               write_complex_type, &
@@ -46,8 +49,8 @@ module amelethdf
     use planewave_m, only : planewave_t, read_planewave => read, &
                             islinear, iselliptic, C_PLANE_WAVE
     use floatingtype_m, only : floatingtype_t, read_floatingtype => read, &
-                               issinglereal, isvector, convert_to_real_vector, &
-                               set_floating_type
+                               issinglereal, issinglecomplex, isvector, &
+                               convert_to_real_vector, set_floating_type
     use stringdataset_m, only : get_dataset_lmn, read_string_dataset1, &
                                 read_string_vector => read_vector, &
                                 write_string_dataset => write_nd_dataset
