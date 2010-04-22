@@ -46,8 +46,10 @@ module amelethdf
                               write_complex_dataset => write_nd_dataset, &
                               read_1d_complex_dataset => read_dataset
     use hdfpath_m, only : basename, dirname, exists, isleaf, isgroup, like, join
-    use planewave_m, only : planewave_t, read_planewave => read, &
-                            islinear, iselliptic, C_PLANE_WAVE
+    use planewave_m, only : C_PLANE_WAVE, planewave_t, read_planewave => read, &
+                            islinear, iselliptic
+    use generator_m, only : C_GENERATOR, generator_t, generator_read => read, &
+                            generator_clear_content => clear_content
     use floatingtype_m, only : floatingtype_t, read_floatingtype => read, &
                                issinglereal, issinglecomplex, isvector, &
                                convert_to_real_vector, set_floating_type
