@@ -22,6 +22,7 @@ program ameletreader
     type(unstructured_mesh_t) :: umesh
     type(physicalvolume_t) :: pv
     type(planewave_t) :: pw
+    type(generator_t) :: g
     type(floatingtype_t) :: ft
     type(link_t) :: link
 
@@ -128,6 +129,7 @@ program ameletreader
         if (like(path, C_ELECTROMAGNETIC_SOURCE//C_PLANE_WAVE)) then
             do j=1, size(children_name2)
                 path2 = trim(path)//"/"//trim(children_name2(j))
+                print *, "Plane Wave  : ", trim(path)
                 print *, path2
                 call read_planewave(file_id, path2, pw)
                 print *, "Theta : ", pw%theta
@@ -135,7 +137,27 @@ program ameletreader
                 print *, "Polarization : ", pw%polarization
                 print *, "Polarization is linear : ", islinear(pw)
                 print *, "Polarization is elliptic : ", iselliptic(pw)
-                print *, "Magnitude : ", pw%magnitude%singlecomplex%value
+                if (issinglecomplex(pw%magnitude)) then
+                    print *, "  Magnitude :", trim( &
+                        singlecomplex_to_string(pw%magnitude%singlecomplex))
+                endif
+            enddo
+        else if (like(path, C_ELECTROMAGNETIC_SOURCE//C_GENERATOR)) then
+            do j=1, size(children_name2)
+                path2 = trim(path)//"/"//trim(children_name2(j))
+                print *, "Generator : ", trim(path)
+                print *, path2
+                call generator_read(file_id, path2, g)
+                print *, "Type : ", g%type
+                if (issinglecomplex(g%inner_impedance)) then
+                    print *, "  Inner impedance :", trim( &
+                        singlecomplex_to_string(g%inner_impedance%singlecomplex))
+                endif
+                if (issinglecomplex(g%magnitude)) then
+                    print *, "  Magnitude :", trim( &
+                        singlecomplex_to_string(g%magnitude%singlecomplex))
+                endif
+                call generator_clear_content(file_id, path2, g)
             enddo
         endif
     enddo
