@@ -19,6 +19,10 @@ module vector_m
         complex, dimension(:), allocatable :: cvalue
     end type vector_t
 
+    interface assignment (=)
+        module procedure vector_equal_vector
+    end interface
+
     contains
         ! read a vector_t floating type
         subroutine read(file_id, path, vector)
@@ -104,4 +108,23 @@ module vector_m
             endif
             call make_single(loc_id, path, vector%single)
         end subroutine write
+
+        subroutine vector_equal_vector(v1, v2)
+            type(vector_t), intent(out) :: v1
+            type(vector_t), intent(in) :: v2
+
+            call clear_content(v1)
+            if (allocated(v2%ivalue)) then
+                allocate(v1%ivalue(size(v2%ivalue)))
+                v1%ivalue = v2%ivalue
+            endif
+            if (allocated(v2%rvalue)) then
+                allocate(v1%rvalue(size(v2%rvalue)))
+                v1%rvalue = v2%rvalue
+            endif
+            if (allocated(v2%cvalue)) then
+                allocate(v1%cvalue(size(v2%cvalue)))
+                v1%cvalue = v2%cvalue
+            endif
+        end subroutine vector_equal_vector
 end module vector_m

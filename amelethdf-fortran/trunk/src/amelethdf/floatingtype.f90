@@ -141,14 +141,16 @@ contains
     function convert_to_real_vector(ft) result(vector)
         type(floatingtype_t), intent(in) :: ft
 
-        real, dimension(:), allocatable :: vector
+        real, dimension(:), pointer :: vector
 
         if (issinglereal(ft)) then
             allocate(vector(1))
             vector = ft%singlereal%value
         else if (isvector(ft)) then
-            allocate(vector(size(ft%vector%rvalue)))
-            vector(:) = ft%vector%rvalue(:)
+            if (allocated(ft%vector%rvalue)) then
+                allocate(vector(size(ft%vector%rvalue)))
+                vector(:) = ft%vector%rvalue(:)
+            endif
         endif
     end function convert_to_real_vector
 
