@@ -92,15 +92,25 @@ module mesh_m
         end subroutine print_groupgroup
 
         ! Helper functions
+        ! Return .true. is path is a group
         logical function isgroup(path)
             character(len=*), intent(in) :: path
 
             isgroup = like(path, "/mesh/*/*/group/*")
         end function isgroup
 
+        ! Return .true. if path is a groupgroup
         logical function isgroupgroup(path)
             character(len=*), intent(in) :: path
 
             isgroupgroup = like(path, "/mesh/*/*/groupgroup/*")
         end function isgroupgroup
+
+        ! Clear the content of a group
+        subroutine groupgroup_clear_content(gg)
+            type(groupgroup_t), intent(inout) :: gg
+
+            gg%name = ""
+            if (allocated(gg%elements)) deallocate(gg%elements)
+        end subroutine groupgroup_clear_content
 end module mesh_m

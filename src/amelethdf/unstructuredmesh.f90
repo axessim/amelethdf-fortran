@@ -6,7 +6,8 @@ module unstructuredmesh_m
                             AL => ABSOLUTE_PATH_NAME_LENGTH, &
                             read_children_name, trim_null_char, &
                             read_attribute
-    use mesh_m, only : groupgroup_t, print_groupgroup, read_groupgroup
+    use mesh_m, only : groupgroup_t, print_groupgroup, read_groupgroup, &
+                       groupgroup_clear_content
     use hdfpath_m, only : exists, join
 
     implicit none
@@ -570,4 +571,60 @@ module unstructuredmesh_m
                 endif
             enddo
         end function get_index_by_short_name_in_some
+
+        ! Clear content subroutines
+        subroutine selector_on_mesh_node_clear_content(somn)
+            type(selector_on_mesh_node_t), intent(inout) :: somn
+
+            if (allocated(somn%short_name)) deallocate(somn%short_name)
+            if (allocated(somn%index)) deallocate(somn%index)
+        end subroutine selector_on_mesh_node_clear_content
+
+        subroutine selector_on_mesh_element_clear_content(some)
+            type(selector_on_mesh_element_t), intent(inout) :: some
+
+            if (allocated(some%short_name)) deallocate(some%short_name)
+            if (allocated(some%index)) deallocate(some%index)
+            if (allocated(some%v1)) deallocate(some%v1)
+            if (allocated(some%v2)) deallocate(some%v2)
+            if (allocated(some%v3)) deallocate(some%v3)
+        end subroutine selector_on_mesh_element_clear_content
+
+        subroutine group_clear_content(group)
+            type(group_t), intent(inout) :: group
+
+            group%name = ""
+            group%type = ""
+            group%entity_type = ""
+            if (allocated(group%elements)) deallocate(group%elements)
+        end subroutine group_clear_content
+
+        subroutine clear_content(umesh)
+            type(unstructured_mesh_t), intent(inout) :: umesh
+
+            integer :: i
+
+            umesh%name = ""
+            if (allocated(umesh%nodes)) deallocate(umesh%nodes)
+            if (allocated(umesh%elements)) deallocate(umesh%elements)
+            if (allocated(umesh%offsets)) deallocate(umesh%offsets)
+            if (allocated(umesh%element_nodes)) deallocate(umesh%element_nodes)
+
+            if (allocated(umesh%groups)) then
+                do i=1,size(umesh%groups)
+                    call group_clear_content(umesh%groups(i))
+                enddo
+                deallocate(umesh%groups)
+            endif
+
+            if (allocated(umesh%groupgroups)) then
+                do i=1,size(umesh%groupgroups)
+                    call groupgroup_clear_content(umesh%groupgroups(i))
+                enddo
+                deallocate(umesh%groupgroups)
+            endif
+
+            call selector_on_mesh_node_clear_content(umesh%som_node)
+            call selector_on_mesh_element_clear_content(umesh%som_element)
+        end subroutine clear_content
 end module unstructuredmesh_m

@@ -10,6 +10,7 @@ module amelethdf
                            C_LABEL
     use mesh_m, only : C_MESH, isstructured
     use unstructuredmesh_m, only : umesh_read => read, &
+                                   umesh_clear_content => clear_content, &
                                    umesh_print => printt, &
                                    unstructured_mesh_t, &
                                    umesh_group_t => group_t, &
@@ -21,9 +22,11 @@ module amelethdf
                                    get_index_by_short_name_in_some, &
                                    umesh_generate_offsets => generate_offsets
     use structuredmesh_m, only : smesh_read => read, &
+                                 smesh_clear_content => clear_content, &
                                  smesh_print => printt, &
                                  structured_mesh_t
     use simulation_m, only : read_simulation => read, &
+                             simulation_clear_content => clear_content, &
                              print_simulation => printt, &
                              C_SIMULATION, &
                              simulation_t
@@ -47,7 +50,8 @@ module amelethdf
                               read_1d_complex_dataset => read_dataset
     use hdfpath_m, only : basename, dirname, exists, isleaf, isgroup, like, join
     use planewave_m, only : C_PLANE_WAVE, planewave_t, read_planewave => read, &
-                            islinear, iselliptic
+                            islinear, iselliptic, &
+                            planewave_clear_content => clear_content
     use generator_m, only : C_GENERATOR, generator_t, generator_read => read, &
                             generator_clear_content => clear_content
     use floatingtype_m, only : floatingtype_t, read_floatingtype => read, &
