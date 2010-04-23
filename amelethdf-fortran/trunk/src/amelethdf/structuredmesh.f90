@@ -5,7 +5,8 @@ module structuredmesh_m
                             AL => ABSOLUTE_PATH_NAME_LENGTH, &
                             read_children_name
     use stringdataset_m, only : get_dataset_lmn, read_string_dataset1
-    use mesh_m, only : groupgroup_t, print_groupgroup, read_groupgroup
+    use mesh_m, only : groupgroup_t, print_groupgroup, read_groupgroup, &
+                       groupgroup_clear_content
 
     implicit none
 
@@ -23,7 +24,7 @@ module structuredmesh_m
     type group_t
         character(len=AL) :: name = ""
         character(len=EL) :: type = ""
-        character(len=EL) :: entityType = ""
+        character(len=EL) :: entity_type = ""
         integer, dimension(:, :), allocatable :: elements
     end type group_t
 
@@ -170,4 +171,39 @@ module structuredmesh_m
                                         dims, hdferr)
             call check(MSIG//"Can't read values for : "//path)
         end subroutine read_group
+
+        subroutine group_clear_content(group)
+            type(group_t), intent(inout) :: group
+
+            group%name = ""
+            group%type = ""
+            group%entity_type = ""
+            if (allocated(group%elements)) deallocate(group%elements)
+        end subroutine group_clear_content
+
+        ! Clear content subroutine
+        subroutine clear_content(smesh)
+            type(structured_mesh_t), intent(inout) :: smesh
+
+            integer :: i
+
+            smesh%name = ""
+            if (allocated(smesh%x)) deallocate(smesh%x)
+            if (allocated(smesh%y)) deallocate(smesh%y)
+            if (allocated(smesh%z)) deallocate(smesh%z)
+
+            if (allocated(smesh%groups)) then
+                do i=1,size(smesh%groups)
+                    call group_clear_content(smesh%groups(i))
+                enddo
+                deallocate(smesh%groups)
+            endif
+
+            if (allocated(smesh%groupgroups)) then
+                do i=1,size(smesh%groupgroups)
+                    call groupgroup_clear_content(smesh%groupgroups(i))
+                enddo
+                deallocate(smesh%groupgroups)
+            endif
+        end subroutine clear_content
 end module structuredmesh_m

@@ -99,4 +99,13 @@ module simulation_m
                 enddo
             endif
         end subroutine printt
+
+        ! Clear content
+        subroutine clear_content(sim)
+            type(simulation_t), intent(inout) :: sim
+
+            sim%name = ""
+            if (allocated(sim%inputs)) deallocate(sim%inputs)
+            if (allocated(sim%outputs)) deallocate(sim%outputs)
+        end subroutine clear_content
 end module simulation_m

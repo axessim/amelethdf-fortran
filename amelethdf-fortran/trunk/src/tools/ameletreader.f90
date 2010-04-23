@@ -61,6 +61,7 @@ program ameletreader
     do i=1, size(children_name)
         call read_simulation(file_id, C_SIMULATION//trim(children_name(i)), sim)
         call print_simulation(sim)
+        call simulation_clear_content(sim)
     enddo
 
     ! Meshes
@@ -82,9 +83,11 @@ program ameletreader
             if (isStructured(file_id, trim(path2))) then
                 call smesh_read(file_id, trim(path2), smesh)
                 call smesh_print(smesh)
+                call smesh_clear_content(smesh)
             else
                 call umesh_read(file_id, trim(path2), umesh)
                 call umesh_print(umesh)
+                call umesh_clear_content(umesh)
             endif
         enddo
     enddo
@@ -141,6 +144,7 @@ program ameletreader
                     print *, "  Magnitude :", trim( &
                         singlecomplex_to_string(pw%magnitude%singlecomplex))
                 endif
+                call planewave_clear_content(pw)
             enddo
         else if (like(path, C_ELECTROMAGNETIC_SOURCE//C_GENERATOR)) then
             do j=1, size(children_name2)
