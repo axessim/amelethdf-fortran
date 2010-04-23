@@ -16,11 +16,19 @@ INCLUDE_DIRECTORIES(${LIBHDF5_DIR}/include
                     ${CMAKE_CURRENT_BINARY_DIR}/src/amelethdf)
 
 FIND_PACKAGE(ZLIB REQUIRED)
-SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/libhdf5hl_fortran.a
-                      ${LIBHDF5_DIR}/lib/libhdf5_hl.a
-                      ${LIBHDF5_DIR}/lib/libhdf5_fortran.a
-                      ${LIBHDF5_DIR}/lib/libhdf5.a
-                      ${ZLIB_LIBRARY})
+IF (WIN32)
+    SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/hdf5_hl_fortrandll.lib
+                          ${LIBHDF5_DIR}/lib/hdf5_hldll.lib
+                          ${LIBHDF5_DIR}/lib/hdf5_fortrandll.lib
+                          ${LIBHDF5_DIR}/lib/hdf5dll.lib
+                          ${ZLIB_LIBRARY})
+ELSE (LINUX)
+    SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/libhdf5hl_fortran.a
+                          ${LIBHDF5_DIR}/lib/libhdf5_hl.a
+                          ${LIBHDF5_DIR}/lib/libhdf5_fortran.a
+                          ${LIBHDF5_DIR}/lib/libhdf5.a
+                          ${ZLIB_LIBRARY})
+ENDIF (WIN32)
 
 SET(tools_lib_dep amelethdf ${amelethdf_lib_dep})
 
