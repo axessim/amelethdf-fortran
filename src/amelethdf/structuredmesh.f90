@@ -46,19 +46,18 @@ module structuredmesh_m
             character(len=AL) :: path = "", group_path = ""
             character(len=EL), dimension(:), allocatable :: group_name
 
+            call clear_content(smesh)
+
             smesh%name = ""
             smesh%name = mesh_path
 
             ! X Axis
-            if (allocated(smesh%x)) deallocate(smesh%x)
             call read_axis(file_id, trim(mesh_path), D_X, smesh%x)
 
             ! Y Axis
-            if (allocated(smesh%y)) deallocate(smesh%y)
             call read_axis(file_id, trim(mesh_path), D_Y, smesh%y)
 
             ! Z Axis
-            if (allocated(smesh%z)) deallocate(smesh%z)
             call read_axis(file_id, trim(mesh_path), D_Z, smesh%z)
 
             ! groups
@@ -67,7 +66,6 @@ module structuredmesh_m
             if (allocated(group_name)) deallocate(group_name)
             call read_children_name(file_id, path, group_name)
             n = size(group_name)
-            if (allocated(smesh%groups)) deallocate(smesh%groups)
             allocate(smesh%groups(n))
             do i=1,n
                 group_path = trim(path)//"/"//trim(group_name(i))
@@ -79,7 +77,6 @@ module structuredmesh_m
             path = trim(mesh_path)//GROUPGROUP
             if (allocated(group_name)) deallocate(group_name)
             call read_children_name(file_id, path, group_name)
-            if (allocated(smesh%groupgroups)) deallocate(smesh%groupgroups)
             n = size(group_name)
             allocate(smesh%groupgroups(n))
             do i=1,n
@@ -125,18 +122,22 @@ module structuredmesh_m
         subroutine printt(smesh)
             type(structured_mesh_t), intent(in) :: smesh
 
-            integer :: i
+            integer :: i, nb
 
             print *, "Structured mesh"
             print *, "Name : ", smesh%name
             print *, "Groups :"
-            do i=1,size(smesh%groups)
+            nb = 0
+            if (allocated(smesh%groups)) nb = size(smesh%groups)
+            do i=1,nb
                 print *, "Name : ", smesh%groups(i)%name, &
                          ", type : ", smesh%groups(i)%type
             enddo
 
             print *, "GroupGroups :"
-            do i=1,size(smesh%groupgroups)
+            nb = 0
+            if (allocated(smesh%groupgroups)) nb = size(smesh%groupgroups)
+            do i=1,nb
                 print *, "Name : ", smesh%groupgroups(i)%name
             enddo
         end subroutine printt

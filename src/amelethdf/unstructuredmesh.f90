@@ -79,13 +79,15 @@ module unstructuredmesh_m
             character(len=AL) :: group_path
             character(len=EL), dimension(:), allocatable :: group_name
 
+
+            call clear_content(umesh)
+
             umesh%name = ""
             umesh%name = mesh_path
 
             ! nodes
             path = ""
             path = trim(mesh_path)//NODES
-            if (allocated(umesh%nodes)) deallocate(umesh%nodes)
             if (exists(file_id, path)) then
                 ! number of nodes
                 call h5ltget_dataset_info_f(file_id, path, two_dims, &
@@ -102,7 +104,6 @@ module unstructuredmesh_m
             ! elements
             path = ""
             path = trim(mesh_path)//ELEMENTS
-            if (allocated(umesh%elements)) deallocate(umesh%elements)
             if (exists(file_id, path)) then
                 ! number of elements
                 call h5ltget_dataset_info_f(file_id, path, one_dims, &
@@ -119,7 +120,6 @@ module unstructuredmesh_m
             ! number of elements nodes
             path = ""
             path = trim(mesh_path)//ELEMENT_NODES
-            if (allocated(umesh%element_nodes)) deallocate(umesh%element_nodes)
             if (exists(file_id, path)) then
                 call h5ltget_dataset_info_f(file_id, path, one_dims, &
                                             type_class, type_size, hdferr)
@@ -135,7 +135,6 @@ module unstructuredmesh_m
             ! groups
             path = ""
             path = trim(mesh_path)//S_GROUP
-            if (allocated(umesh%groups)) deallocate(umesh%groups)
             if (exists(file_id, path)) then
                 if (allocated(group_name)) deallocate(group_name)
                 call read_children_name(file_id, path, group_name)
@@ -150,7 +149,6 @@ module unstructuredmesh_m
             ! groupGroups
             path = ""
             path = trim(mesh_path)//GROUPGROUP
-            if (allocated(umesh%groupgroups)) deallocate(umesh%groupgroups)
             if (exists(file_id, path)) then
                 if (allocated(group_name)) deallocate(group_name)
                 call read_children_name(file_id, path, group_name)
@@ -372,19 +370,24 @@ module unstructuredmesh_m
 
             integer :: i, offset = 1
             integer(kind=8) :: element_type
+            integer :: nb
 
             print *
             print *
             print *, "Unstructured Mesh"
             print *, "Name : ", trim(umesh%name)
 
-            print *, "Number of nodes : ", size(umesh%nodes)/3
-            do i=1, size(umesh%nodes)/3
+            nb = 0
+            if (allocated(umesh%nodes)) nb = size(umesh%nodes)/3
+            print *, "Number of nodes : ", nb/3
+            do i=1, nb/3
                 print *, "Node n°", i-1, " :", umesh%nodes(:, i)
             enddo
 
-            print *, "Number of elements : ", size(umesh%elements)
-            do i=1, size(umesh%elements)
+            nb = 0
+            if (allocated(umesh%elements)) nb = size(umesh%elements)
+            print *, "Number of elements : ", nb
+            do i=1, nb
                 element_type = umesh%elements(i)
                 print *, "Element n°", i-1, ", type :", umesh%elements(i)
                 if (element_type == 1) then
@@ -419,33 +422,43 @@ module unstructuredmesh_m
             enddo
 
             ! Groups
+            nb = 0
+            if (allocated(umesh%groups)) nb = size(umesh%groups)
             print *
-            print *, "Number of groups : ", size(umesh%groups)
-            do i=1, size(umesh%groups)
+            print *, "Number of groups : ", nb
+            do i=1, nb
                 print *, "--name : ",trim(umesh%groups(i)%name)
                 print *, "  type : ", trim(umesh%groups(i)%type)
                 print *, "  entityType : ", trim(umesh%groups(i)%entity_type)
             enddo
 
             ! GroupGroups
+            nb = 0
+            if (allocated(umesh%groupgroups)) nb = size(umesh%groupgroups)
             print *
-            print *, "Number of groupGroups : ", size(umesh%groupgroups)
-            do i=1, size(umesh%groupgroups)
+            print *, "Number of groupGroups : ", nb
+            do i=1, nb
                 print *, "Name : ", trim(umesh%groupgroups(i)%name)
             enddo
 
             ! SelectorOnMesh/nodes
+            nb = 0
+            if (allocated(umesh%som_node%short_name)) &
+                nb = size(umesh%som_node%short_name)
             print *
             print *, "Selector on mesh / nodes ..."
-            do i=1,size(umesh%som_node%short_name)
+            do i=1,nb
                 print *, "shortName : ", trim(umesh%som_node%short_name(i)), &
                          ", index : ", umesh%som_node%index(i)
             enddo
 
             ! SelectorOnMesh/elements
+            nb = 0
+            if (allocated(umesh%som_element%short_name)) &
+                nb = size(umesh%som_element%short_name)
             print *
             print *, "Selector on mesh / elements ..."
-            do i=1,size(umesh%som_element%short_name)
+            do i=1,nb
                 print *, "shortName : ", trim(umesh%som_element%short_name(i)), &
                          ", index : ", umesh%som_element%index(i), &
                          ", v1 : ", umesh%som_element%v1(i), &
@@ -461,6 +474,9 @@ module unstructuredmesh_m
             type(group_t), pointer :: group
 
             integer :: i
+
+            nullify(group)
+            if (.not. allocated(umesh%groups)) return
 
             do i=1, size(umesh%groups)
                 if (umesh%groups(i)%name == path) then
