@@ -148,7 +148,7 @@ module hdfpath_m
         ! for ["/foo", "bar"] returns "/foo/bar"
         function join(paths, sep_)
             character(len=*), dimension(:), intent(in) :: paths
-            character(len=size(paths)*len(paths)) :: join
+            character(len=size(paths)*(len(paths)+1)) :: join
             character, intent(in), optional :: sep_
             
             integer :: i
