@@ -1,6 +1,6 @@
 module mesh_m
     use h5lt
-    use amelethdf_m, only : check, hdferr, &
+    use amelethdf_m, only : check, hdferr, trim_null_char, &
                             EL => ELEMENT_NAME_LENGTH, &
                             AL => ABSOLUTE_PATH_NAME_LENGTH
     use hdfpath_m, only : like
@@ -76,6 +76,7 @@ module mesh_m
             group%elements = ""
             call read_string_dataset1(file_id, trim(path), &
                                       group%elements, lmn(1), lmn(2), 1)
+            call trim_null_char(group%elements)
         end subroutine read_groupgroup
 
         ! Prints a groupgroup to the console
