@@ -30,7 +30,7 @@ module amelethdf_m
         ! Can remove the null character at the end of a string
         ! c is an optional character. It is used to fill
         ! the rest of the string
-        pure elemental subroutine trim_null_char(string, c)
+        elemental subroutine trim_null_char(string, c)
             character(len=*), intent(inout) :: string
             character, intent(in), optional :: c
             character :: c1
