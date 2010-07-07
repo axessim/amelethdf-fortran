@@ -17,15 +17,20 @@ INCLUDE_DIRECTORIES(${LIBHDF5_DIR}/include
 
 FIND_PACKAGE(ZLIB REQUIRED)
 IF (WIN32)
-    SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/hdf5_hl_fortrandll.lib
-                          ${LIBHDF5_DIR}/lib/hdf5_hldll.lib
-                          ${LIBHDF5_DIR}/lib/hdf5_fortrandll.lib
-                          ${LIBHDF5_DIR}/lib/hdf5dll.lib
+    SET(amelethdf_lib_dep ${LIBHDF5_DIR}/dll/hdf5_hl_fortrandll.lib
+                          ${LIBHDF5_DIR}/dll/hdf5_hldll.lib
+                          ${LIBHDF5_DIR}/dll/hdf5_fortrandll.lib
+                          ${LIBHDF5_DIR}/dll/hdf5_hl_f90cstubdll.lib
+                          ${LIBHDF5_DIR}/dll/hdf5_f90cstubdll.lib
+                          ${LIBHDF5_DIR}/dll/hdf5dll.lib
+                          ${LIBHDF5_DIR}/dll/szip.lib
                           ${ZLIB_LIBRARY})
 ELSE (LINUX)
     SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/libhdf5hl_fortran.a
                           ${LIBHDF5_DIR}/lib/libhdf5_hl.a
                           ${LIBHDF5_DIR}/lib/libhdf5_fortran.a
+                          ${LIBHDF5_DIR}/lib/hdf5_hl_f90cstub.a
+                          ${LIBHDF5_DIR}/lib/hdf5_f90cstub.a
                           ${LIBHDF5_DIR}/lib/libhdf5.a
                           ${ZLIB_LIBRARY})
 ENDIF (WIN32)
