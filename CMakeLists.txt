@@ -29,8 +29,6 @@ ELSE (LINUX)
     SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/libhdf5hl_fortran.a
                           ${LIBHDF5_DIR}/lib/libhdf5_hl.a
                           ${LIBHDF5_DIR}/lib/libhdf5_fortran.a
-                          ${LIBHDF5_DIR}/lib/hdf5_hl_f90cstub.a
-                          ${LIBHDF5_DIR}/lib/hdf5_f90cstub.a
                           ${LIBHDF5_DIR}/lib/libhdf5.a
                           ${ZLIB_LIBRARY})
 ENDIF (WIN32)
