@@ -105,7 +105,7 @@ module hdfpath_m
 
         ! remove separator '/' from the start and the end of string
         ! for "foo/bar/" returns "foo/bar"
-        function remove_sep(path, begin)
+        pure function remove_sep(path, begin)
             character(len=*), intent(in) :: path
             logical, optional, intent(in) :: begin
             character(len=len(path)) :: remove_sep
@@ -146,7 +146,7 @@ module hdfpath_m
 
         ! joins paths of an array of path
         ! for ["/foo", "bar"] returns "/foo/bar"
-        function join(paths, sep_)
+        pure function join(paths, sep_)
             character(len=*), dimension(:), intent(in) :: paths
             character(len=size(paths)*(len(paths)+1)) :: join
             character, intent(in), optional :: sep_
