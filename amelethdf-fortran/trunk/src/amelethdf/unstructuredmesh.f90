@@ -509,13 +509,16 @@ module unstructuredmesh_m
             nb_element = size(umesh%elements)
 
             if (allocated(umesh%offsets)) deallocate(umesh%offsets)
-            allocate(umesh%offsets(nb_element))
 
-            umesh%offsets(1) = 1
-            do i=2, nb_element
-                umesh%offsets(i) = umesh%offsets(i-1) &
-                     + number_of_nodes(umesh%elements(i-1))
-            enddo
+            if (nb_element.gt.0) then
+               allocate(umesh%offsets(nb_element))
+               
+               umesh%offsets(1) = 1
+               do i=2, nb_element
+                  umesh%offsets(i) = umesh%offsets(i-1) &
+                       + number_of_nodes(umesh%elements(i-1))
+               enddo
+            end if
         end subroutine generate_offsets
 
         ! Return a number of nodes array for the element in umesh
