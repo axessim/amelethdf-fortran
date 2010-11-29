@@ -104,7 +104,8 @@ module hdfpath_m
         end function isgroup
 
         ! remove separator '/' from the start and the end of string
-        ! for "foo/bar/" returns "foo/bar"
+        ! for "/foo/bar/" returns "foo/bar"
+        ! if begin=.true. returns "/foo/bar"
         pure function remove_sep(path, begin)
             character(len=*), intent(in) :: path
             logical, optional, intent(in) :: begin
