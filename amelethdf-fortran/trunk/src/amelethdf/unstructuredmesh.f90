@@ -197,6 +197,7 @@ module unstructuredmesh_m
             ! Name setting
             group%name = ""
             group%name = trim(path)
+            dims(1)=1
 
             ! type attribute
             group%type = ""
@@ -211,7 +212,6 @@ module unstructuredmesh_m
             call h5ltget_dataset_info_f(file_id, path, dims, type_class, &
                                         type_size, hdferr)
             call check(MSIG//"Can't read info for : "//path)
-
             ! values
             allocate(group%elements(dims(1)))
             call h5ltread_dataset_int_f(file_id, path, group%elements, &
