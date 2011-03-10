@@ -54,7 +54,7 @@ module unstructuredmesh_m
     type unstructured_mesh_t
         character(len=AL) :: name = ""
         real, dimension(:,:), allocatable :: nodes
-        integer, dimension(:), allocatable :: elements
+        integer(kind=1), dimension(:), allocatable :: elements
         integer, dimension(:), allocatable :: offsets
         integer, dimension(:), allocatable :: element_nodes
         type(group_t), dimension(:), allocatable :: groups
@@ -79,6 +79,8 @@ module unstructuredmesh_m
             character(len=AL) :: path
             character(len=AL) :: group_path
             character(len=EL), dimension(:), allocatable :: group_name
+
+            integer, dimension(:), allocatable :: tmpelements
 
 
             call clear_content(umesh)
@@ -113,8 +115,11 @@ module unstructuredmesh_m
 
                 ! elements
                 allocate(umesh%elements(one_dims(1)))
+                allocate(tmpelements(one_dims(1)))
                 call h5ltread_dataset_f(file_id, path, H5T_NATIVE_INTEGER_4, &
-                                        umesh%elements, one_dims, hdferr)
+                                        tmpelements, one_dims, hdferr)
+                umesh%elements = tmpelements
+                deallocate(tmpelements)
                 call check(MSIG//"Can't read the element's type for :"//path)
             endif
 
@@ -537,7 +542,7 @@ module unstructuredmesh_m
 
         ! Return the number of nodes for a given element type
         elemental function number_of_nodes(element_type)
-            integer, intent(in) :: element_type
+            integer(kind=1), intent(in) :: element_type
 
             integer :: i, number_of_nodes
 
