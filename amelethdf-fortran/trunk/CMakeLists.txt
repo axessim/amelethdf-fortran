@@ -17,6 +17,8 @@ INCLUDE_DIRECTORIES(${LIBHDF5_DIR}/include ${LIBHDF5_DIR}/modsdll
                     ${CMAKE_CURRENT_BINARY_DIR}/src/amelethdf)
 
 FIND_PACKAGE(ZLIB REQUIRED)
+get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
+MESSAGE(FORTRAN COMPILER = "${Fortran_COMPILER_NAME}")
 IF (${CMAKE_HOST_WIN32})
     SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/hdf5_hl_fortrandll.lib
                           ${LIBHDF5_DIR}/lib/hdf5_hldll.lib
@@ -27,11 +29,23 @@ IF (${CMAKE_HOST_WIN32})
                           ${LIBHDF5_DIR}/lib/szip.lib
                           ${ZLIB_LIBRARY})
 ELSE (${CMAKE_HOST_UNIX})
+  IF (Fortran_COMPILER_NAME STREQUAL "gfortran")
+    MESSAGE(GFORTRAN)
     SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/libhdf5hl_fortran.a
                           ${LIBHDF5_DIR}/lib/libhdf5_hl.a
                           ${LIBHDF5_DIR}/lib/libhdf5_fortran.a
                           ${LIBHDF5_DIR}/lib/libhdf5.a
                           ${ZLIB_LIBRARY})
+  ELSE (Fortran_COMPILER_NAME STREQUAL "gfortran")
+    MESSAGE(IFORT)
+    SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/libhdf5hl_fortran.a
+                          ${LIBHDF5_DIR}/lib/libhdf5_hl_f90cstub.a
+                          ${LIBHDF5_DIR}/lib/libhdf5_hl.a
+                          ${LIBHDF5_DIR}/lib/libhdf5_fortran.a
+                          ${LIBHDF5_DIR}/lib/libhdf5_f90cstub.a
+                          ${LIBHDF5_DIR}/lib/libhdf5.a
+                          ${ZLIB_LIBRARY})
+  ENDIF (Fortran_COMPILER_NAME STREQUAL "gfortran")
 ENDIF (${CMAKE_HOST_WIN32})
 
 SET(tools_lib_dep amelethdf ${amelethdf_lib_dep})
