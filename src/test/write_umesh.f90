@@ -207,7 +207,6 @@ program write_an_umesh
     call h5dcreate_f(file_id, path, H5T_STD_U8BE, space, dset, hdferr)
     call check("Can't create dataset for "//path)
     call h5dwrite_f(dset, H5T_NATIVE_INTEGER, elementTypes, dims, hdferr, file_space_id=space)
-    !call h5ltmake_dataset_f(file_id, trim(path), 1, dims, H5T_NATIVE_UINT8, elementTypes, hdferr)
     call check("Can't write dataset for "//path)
 
     call h5dclose_f(dset,hdferr)
