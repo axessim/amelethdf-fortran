@@ -36,6 +36,11 @@ ELSE (${CMAKE_HOST_UNIX})
                           ${LIBHDF5_DIR}/lib/libhdf5_fortran.a
                           ${LIBHDF5_DIR}/lib/libhdf5.a
                           ${ZLIB_LIBRARY})
+    SET(amelethdf_lib_dep_so ${LIBHDF5_DIR}/lib/libhdf5hl_fortran.so
+                          ${LIBHDF5_DIR}/lib/libhdf5_hl.so
+                          ${LIBHDF5_DIR}/lib/libhdf5_fortran.so
+                          ${LIBHDF5_DIR}/lib/libhdf5.so
+                          ${ZLIB_LIBRARY})
   ELSE (Fortran_COMPILER_NAME STREQUAL "gfortran")
     MESSAGE(IFORT)
     SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/libhdf5hl_fortran.a
@@ -44,6 +49,13 @@ ELSE (${CMAKE_HOST_UNIX})
                           ${LIBHDF5_DIR}/lib/libhdf5_fortran.a
                           ${LIBHDF5_DIR}/lib/libhdf5_f90cstub.a
                           ${LIBHDF5_DIR}/lib/libhdf5.a
+                          ${ZLIB_LIBRARY})
+    SET(amelethdf_lib_dep_so ${LIBHDF5_DIR}/lib/libhdf5hl_fortran.so
+                          ${LIBHDF5_DIR}/lib/libhdf5_hl_f90cstub.so
+                          ${LIBHDF5_DIR}/lib/libhdf5_hl.so
+                          ${LIBHDF5_DIR}/lib/libhdf5_fortran.so
+                          ${LIBHDF5_DIR}/lib/libhdf5_f90cstub.so
+                          ${LIBHDF5_DIR}/lib/libhdf5.so
                           ${ZLIB_LIBRARY})
   ENDIF (Fortran_COMPILER_NAME STREQUAL "gfortran")
 ENDIF (${CMAKE_HOST_WIN32})

@@ -4,7 +4,7 @@ FILE(GLOB amelethdf_src *.f90)
 
 ADD_LIBRARY(amelethdf_so SHARED ${amelethdf_src})
 SET_TARGET_PROPERTIES( amelethdf_so  PROPERTIES OUTPUT_NAME "amelethdff")
-TARGET_LINK_LIBRARIES(amelethdf_so ${amelethdf_lib_dep})
+TARGET_LINK_LIBRARIES(amelethdf_so ${amelethdf_lib_dep_so})
 INSTALL(TARGETS amelethdf_so LIBRARY DESTINATION "lib"
                              ARCHIVE DESTINATION "lib"
                              RUNTIME DESTINATION "bin")
