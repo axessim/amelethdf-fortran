@@ -21,13 +21,14 @@ get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 MESSAGE(FORTRAN COMPILER = "${Fortran_COMPILER_NAME}")
 IF (${CMAKE_HOST_WIN32})
     SET(amelethdf_lib_dep ${LIBHDF5_DIR}/lib/hdf5_hl_fortrandll.lib
+	                      ${LIBHDF5_DIR}/lib/hdf5_hl_f90cstubdll.lib
                           ${LIBHDF5_DIR}/lib/hdf5_hldll.lib
                           ${LIBHDF5_DIR}/lib/hdf5_fortrandll.lib
-                          ${LIBHDF5_DIR}/lib/hdf5_hl_f90cstubdll.lib
                           ${LIBHDF5_DIR}/lib/hdf5_f90cstubdll.lib
                           ${LIBHDF5_DIR}/lib/hdf5dll.lib
                           ${LIBHDF5_DIR}/lib/szip.lib
                           ${ZLIB_LIBRARY})
+	SET(amelethdf_lib_dep_so ${amelethdf_lib_dep})
 ELSE (${CMAKE_HOST_UNIX})
   IF (Fortran_COMPILER_NAME STREQUAL "gfortran")
     MESSAGE(GFORTRAN)
