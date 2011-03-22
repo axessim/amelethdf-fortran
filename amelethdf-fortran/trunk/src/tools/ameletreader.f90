@@ -20,6 +20,7 @@ program ameletreader
     type(simulation_t) :: sim
     type(structured_mesh_t) :: smesh
     type(unstructured_mesh_t) :: umesh
+    type(multilayer_t) :: ml
     type(physicalvolume_t) :: pv
     type(planewave_t) :: pw
     type(generator_t) :: g
@@ -95,6 +96,17 @@ program ameletreader
     ! Physical Models
     print *
     print *, "Reading Physical models ..."
+    print *, "Reading Multi-Layers ..."
+    call allocate_children_name(file_id, C_MULTILAYER, children_name)
+    do i=1, size(children_name)
+        path = trim(C_MULTILAYER)//trim(children_name(i))
+        print *, " Multi-layer : ", children_name(i)
+        call multilayer_read(file_id, trim(path),ml)
+        do j=1, size(ml%thickness)
+            print *,"    Pysical model : ", trim(ml%physicalModel(j))
+            print *,"    Thickness : ", ml%thickness(j)
+        enddo
+    enddo
     print *, "Reading physical volume models ..."
     call allocate_children_name(file_id, C_PHYSICAL_VOLUME, children_name)
     do i=1, size(children_name)
