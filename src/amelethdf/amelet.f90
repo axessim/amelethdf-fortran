@@ -40,9 +40,12 @@ module amelethdf
     use arrayset_m, only : arrayset_t, read_arrayset => read, &
                            arrayset_to_string => to_string2
     use physicalmodel_m, only : C_PHYSICAL_MODEL, C_PHYSICAL_VOLUME, &
+                                C_MULTILAYER, &
                                 physicalvolume_t, &
+                                multilayer_t, &
                                 physicalvolume_read => read, &
-                                physicalvolume_clear_content => clear_content
+                                physicalvolume_clear_content => clear_content, &
+                                multilayer_read
     use complextype_m, only : write_complex_attribute => write_attribute, &
                               read_complex_attribute => read_attribute, &
                               write_complex_type, &
