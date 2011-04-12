@@ -32,6 +32,7 @@ module physicalmodel_m
     type multilayer_t
         character(len=AL), dimension(:), allocatable :: physicalModel
         real(kind=4), dimension(:), allocatable :: thickness
+        integer(kind=4) :: nblayers
     end type multilayer_t
 
     contains
@@ -87,7 +88,7 @@ module physicalmodel_m
             allocate(field_offsets(nfields))
             call check(MSIG//"Can't read field info for"//path)
 
-
+            ml%nblayers=nrecords
             if (allocated(ml%physicalModel)) deallocate(ml%physicalModel)
             allocate(ml%physicalModel(nrecords))
             allocate(cbuf(nrecords))
@@ -102,7 +103,7 @@ module physicalmodel_m
             enddo
             ml%physicalModel(:) = cbuf(:)
 
-
+ 
             if (allocated(ml%thickness)) deallocate(ml%thickness)
             allocate(ml%thickness(nrecords))
             start = 0
