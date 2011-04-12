@@ -26,6 +26,7 @@ program ameletreader
     type(generator_t) :: g
     type(floatingtype_t) :: ft
     type(link_t) :: link
+    type(globalenvironment_t) :: ge
 
     ! Write working directory
     call getcwd(working_directory)
@@ -102,7 +103,8 @@ program ameletreader
         path = trim(C_MULTILAYER)//trim(children_name(i))
         print *, " Multi-layer : ", children_name(i)
         call multilayer_read(file_id, trim(path),ml)
-        do j=1, size(ml%thickness)
+        print *, "    number of layers = ", ml%nblayers
+        do j=1, ml%nblayers
             print *,"    Pysical model : ", trim(ml%physicalModel(j))
             print *,"    Thickness : ", ml%thickness(j)
         enddo
@@ -184,9 +186,26 @@ program ameletreader
     call allocate_children_name(file_id, C_GLOBAL_ENVIRONMENT, children_name)
     do i=1, size(children_name)
         path = trim(C_GLOBAL_ENVIRONMENT)//trim(children_name(i))
-        print *, "Global environment : ", trim(path)
-        call read_floatingtype(file_id, trim(path)//"/"//"frequency", ft)
-        print *, "Value : ", ft%vector%rvalue
+        print *, "Global environment : "
+        call allocate_children_name(file_id,path,children_name2)
+        do j=1, size(children_name2)
+            path2 = trim(path)//"/"//trim(children_name2(j))
+            print *, "  Path :",trim(path2)
+            call read_ge(file_id,path2,ge)
+            print *, "    nb values :", ge%nbvalues
+            print *, "    values :"
+            do k=1,ge%nbvalues
+                print *,"          ", ge%values(k)
+            enddo
+            print *, "    domain : " , trim(ge%domain)
+            print *, "    scaleType : ", trim(ge%scaleType)
+            print *, "    min : ", ge%minimum
+            print *, "    max : ", ge%maximum
+               
+        enddo
+        !call read_floatingtype(file_id, trim(path)//"/"//"frequency", ft)
+        
+        !print *, "Value : ", ft%vector%rvalue
     enddo
 
     ! Label

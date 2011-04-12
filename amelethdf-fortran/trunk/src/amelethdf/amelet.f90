@@ -65,5 +65,6 @@ module amelethdf
                                 write_string_dataset => write_nd_dataset
     use linkoutputrequest_m, only : link_t, read_link => read, isdataonmesh, &
                                     C_LINK, C_OUTPUT_REQUEST
+    use globalenvironment_m, only : globalenvironment_t, read_ge => read
 
 end module amelethdf
