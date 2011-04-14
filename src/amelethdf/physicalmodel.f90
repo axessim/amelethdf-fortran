@@ -4,9 +4,13 @@ module physicalmodel_m
     use amelethdf_m, only : check, hdferr, &
                             EL => ELEMENT_NAME_LENGTH, &
                             AL => ABSOLUTE_PATH_NAME_LENGTH, &
-                            trim_null_char
+                            trim_null_char, &
+                            read_string_attr => read_attribute, &
+                            read_float_attribute, read_int_attribute, &
+                            read_children_name
     use floatingtype_m, only : floatingtype_t, floatingtype_read => read, &
                                floatingtype_clear_content => clear_content
+    use hdfpath_m, only : exists
 
     implicit none
 
@@ -14,6 +18,7 @@ module physicalmodel_m
 
     character(len=*), parameter :: C_PHYSICAL_MODEL = "/physicalModel/"
     character(len=*), parameter :: C_MULTILAYER = C_PHYSICAL_MODEL//"multilayer/"
+    character(len=*), parameter :: C_GRID = C_PHYSICAL_MODEL//"grid/"
     character(len=*), parameter :: C_PHYSICAL_VOLUME = C_PHYSICAL_MODEL//"volume/"
     character(len=*), parameter :: RELATIVE_PERMITTIVITY = "/relativePermittivity/"
     character(len=*), parameter :: RELATIVE_PERMEABILITY = "/relativePermeability/"
@@ -21,6 +26,20 @@ module physicalmodel_m
     character(len=*), parameter :: MAGNETIC_CONDUCTIVITY = "/magneticConductivity/"
     character(len=*), parameter :: TC_PHYSICALMODEL = "physicalModel"
     character(len=*), parameter :: TC_THICKNESS = "thickness"
+    character(len=*), parameter :: A_TEXTURE_TYPE = "textureType"
+    character(len=*), parameter :: A_SURROUNDING_MATERIAL = "surroundingMaterial"
+    character(len=*), parameter :: A_GRID_MATERIAL = "gridMaterial"
+    character(len=*), parameter :: A_PITCH_FIBER = "pitchFiber"
+    character(len=*), parameter :: A_FIBER_PER_PITCH = "fiberPerPitch"
+    character(len=*), parameter :: A_WIRE_SECTION_TYPE = "wireSectionType"
+    character(len=*), parameter :: A_DIAMETER_WIRE = "diameterWire"
+    character(len=*), parameter :: A_SHIFT = "shift"
+    character(len=*), parameter :: A_THICKNESS_WIRE = "thicknessWire"
+    character(len=*), parameter :: A_WIDTH_WIRE = "widthWire"
+    character(len=*), parameter :: A_RELATIVE_HEIGHT = "relativeHeight"
+    character(len=*), parameter :: A_ANGLE = "angle"
+    character(len=*), parameter :: A_PITCH = "pitch"
+    character(len=EL), dimension(:), allocatable :: children_name
 
     type physicalvolume_t
         type(floatingtype_t) :: relative_permittivity
@@ -35,7 +54,55 @@ module physicalmodel_m
         integer(kind=4) :: nblayers
     end type multilayer_t
 
+
+    type combgrid_t
+        integer(kind=4) :: nbcombs
+        real(kind=4), dimension(:), allocatable :: relativeHeight
+        real(kind=4), dimension(:), allocatable :: angle
+        real(kind=4), dimension(:), allocatable :: pitch
+        character(len=AL) :: surroundingMaterial = ""
+        character(len=AL) :: gridMaterial = ""
+        character(len=12) :: wireSectionType = ""
+        real(kind=4)  :: shift
+        real(kind=4)  :: thicknessWire
+        real(kind=4)  :: widthWire
+        real(kind=4)  :: diameterWire
+    end type combgrid_t
+
+    type randomgrid_t
+        character(len=AL) :: surroundingMaterial = ""
+        character(len=AL) :: gridMaterial = ""
+        integer(kind=4) :: nbrandom
+        real(kind=4), dimension(:), allocatable :: volFractioFiller
+        real(kind=4), dimension(:), allocatable :: diameterWire
+        real(kind=4), dimension(:), allocatable :: lengthWire
+        character(len=6), dimension(:), allocatable :: scaleFiller
+        integer(kind=4), dimension(:), allocatable :: numberFillerType
+    end type randomgrid_t
+
+    type wovengrid_t
+        real(kind=4) :: relativeHeight
+        real(kind=4) :: angle
+        character(len=AL) :: surroundingMaterial = ""
+        character(len=AL) :: gridMaterial = ""
+        character(len=12) :: wireSectionType = ""
+        real(kind=4)  :: thicknessWire
+        real(kind=4)  :: widthWire
+        real(kind=4)  :: diameterWire
+        real(kind=4)  :: pitchFiber
+        integer(kind=4) :: fiberPerPitch
+    end type wovengrid_t
+
+    type grid_t
+        character(len=10) :: textureType = ""
+        type(combgrid_t) :: combgrid
+        type(randomgrid_t) :: randomgrid
+        type(wovengrid_t) :: wovengrid
+    end type grid_t
+
+
     contains
+
         subroutine read(file_id, path, pv)
             implicit none
 
@@ -117,4 +184,147 @@ module physicalmodel_m
             deallocate(field_names, field_sizes, field_offsets, cbuf)
 
         end subroutine multilayer_read
+
+        subroutine woven_read(file_id, path, wovengrid)
+            implicit none
+
+            integer(hid_t), intent(in) :: file_id
+            character(len=*), intent(in) :: path
+            type(wovengrid_t), intent(inout) :: wovengrid
+            character(len=EL) :: buf
+            logical :: ok
+            integer :: i
+            character(len=AL) :: path2 = ""
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_SURROUNDING_MATERIAL, buf)
+            wovengrid%surroundingMaterial = ""
+            wovengrid%surroundingMaterial = trim(buf)
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_GRID_MATERIAL, buf)
+            wovengrid%gridMaterial = ""
+            wovengrid%gridMaterial = trim(buf)
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_WIRE_SECTION_TYPE, buf)
+            wovengrid%wireSectionType = ""
+            wovengrid%wireSectionType = trim(buf)
+            if(wovengrid%wireSectionType == "rectangular") then
+                ok = read_float_attribute(file_id, path, A_THICKNESS_WIRE, &
+                                          wovengrid%thicknessWire, .true.)
+                ok = read_float_attribute(file_id, path, A_WIDTH_WIRE, &
+                                          wovengrid%widthWire, .true.)
+            else if(wovengrid%wireSectionType == "circular") then
+                ok = read_float_attribute(file_id, path, A_DIAMETER_WIRE, &
+                                          wovengrid%diameterWire, .true.)
+            endif
+
+            ok = read_float_attribute(file_id, path, A_PITCH_FIBER, &
+                                      wovengrid%pitchFiber, .true.)
+
+            ok = read_int_attribute(file_id, path, A_FIBER_PER_PITCH, &
+                                      wovengrid%fiberPerPitch, .true.)
+            if (allocated(children_name)) deallocate(children_name)
+            call read_children_name(file_id, path, children_name)
+            do i=1, size(children_name)
+                path2 = trim(path)//"/"//trim(children_name(i))
+                ok = read_float_attribute(file_id, path2, &
+                            A_RELATIVE_HEIGHT, wovengrid%relativeHeight, &
+                            .true.)
+                ok = read_float_attribute(file_id, path2, &
+                            A_ANGLE, wovengrid%angle, &
+                            .true.)
+            enddo
+
+
+        end subroutine woven_read
+
+
+        subroutine comb_read(file_id, path, combgrid)
+            implicit none
+
+            integer(hid_t), intent(in) :: file_id
+            character(len=*), intent(in) :: path
+            type(combgrid_t), intent(inout) :: combgrid
+            character(len=EL) :: buf
+            logical :: ok
+            integer :: i
+            character(len=AL) :: path2 = ""
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_SURROUNDING_MATERIAL, buf)
+            combgrid%surroundingMaterial = ""
+            combgrid%surroundingMaterial = trim(buf)
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_GRID_MATERIAL, buf)
+            combgrid%gridMaterial = ""
+            combgrid%gridMaterial = trim(buf)
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_WIRE_SECTION_TYPE, buf)
+            combgrid%wireSectionType = ""
+            combgrid%wireSectionType = trim(buf)
+            if(combgrid%wireSectionType == "rectangular") then
+                ok = read_float_attribute(file_id, path, A_THICKNESS_WIRE, &
+                                          combgrid%thicknessWire, .true.)
+                ok = read_float_attribute(file_id, path, A_WIDTH_WIRE, &
+                                          combgrid%widthWire, .true.)
+            else if(combgrid%wireSectionType == "circular") then
+                ok = read_float_attribute(file_id, path, A_DIAMETER_WIRE, &
+                                          combgrid%diameterWire, .true.)
+            endif
+
+            ok = read_float_attribute(file_id, path, A_SHIFT, &
+                                      combgrid%shift, .true.)
+
+            if (allocated(children_name)) deallocate(children_name)
+            call read_children_name(file_id, path, children_name)
+            combgrid%nbcombs = size(children_name)
+            if (allocated(combgrid%relativeHeight)) deallocate(combgrid%relativeHeight)
+            allocate(combgrid%relativeHeight(combgrid%nbcombs))
+            if (allocated(combgrid%angle)) deallocate(combgrid%angle)
+            allocate(combgrid%angle(combgrid%nbcombs))
+            if (allocated(combgrid%pitch)) deallocate(combgrid%pitch)
+            allocate(combgrid%pitch(combgrid%nbcombs))
+            do i=1, size(children_name)
+                path2 = trim(path)//"/"//trim(children_name(i))
+                ok = read_float_attribute(file_id, path2, &
+                            A_RELATIVE_HEIGHT, combgrid%relativeHeight(i), &
+                            .true.)
+                ok = read_float_attribute(file_id, path2, &
+                            A_ANGLE, combgrid%angle(i), &
+                            .true.)
+                ok = read_float_attribute(file_id, path2, &
+                            A_PITCH, combgrid%pitch(i), &
+                            .true.)
+            enddo
+
+
+        end subroutine comb_read
+
+        subroutine grid_read(file_id, path, grid)
+            implicit none
+
+            integer(hid_t), intent(in) :: file_id
+            character(len=*), intent(in) :: path
+            type(grid_t), intent(inout) :: grid
+            character(len=EL) :: buf
+            character(len=AL) :: path2
+            logical :: ok
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_TEXTURE_TYPE, buf)
+            grid%textureType = ""
+            grid%textureType = trim(buf)
+            if((grid%textureType == "woven") .or. &
+               (grid%textureType == "unilateral")) then
+                call woven_read(file_id, path, grid%wovengrid)
+            else if(grid%textureType == "comb") then
+                call comb_read(file_id, path, grid%combgrid)
+            endif
+
+        end subroutine grid_read
+
 end module physicalmodel_m
