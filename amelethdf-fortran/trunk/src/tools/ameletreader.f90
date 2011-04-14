@@ -7,7 +7,7 @@ program ameletreader
     character(len=AL) :: command_line_buffer = ""
     character(len=AL) :: filename = ""
 
-    character(len=AL) :: working_directory, path, path2, path3
+    character(len=AL) :: working_directory, path, path2, path3, elt
     character(len=EL), dimension(:), allocatable :: children_name, &
                                                     children_name2, &
                                                     children_name3
@@ -27,6 +27,9 @@ program ameletreader
     type(floatingtype_t) :: ft
     type(link_t) :: link
     type(globalenvironment_t) :: ge
+    type(grid_t) :: grid
+    logical :: link_exists
+
 
     ! Write working directory
     call getcwd(working_directory)
@@ -97,18 +100,93 @@ program ameletreader
     ! Physical Models
     print *
     print *, "Reading Physical models ..."
-    print *, "Reading Multi-Layers ..."
-    call allocate_children_name(file_id, C_MULTILAYER, children_name)
-    do i=1, size(children_name)
-        path = trim(C_MULTILAYER)//trim(children_name(i))
-        print *, " Multi-layer : ", children_name(i)
-        call multilayer_read(file_id, trim(path),ml)
-        print *, "    number of layers = ", ml%nblayers
-        do j=1, ml%nblayers
-            print *,"    Pysical model : ", trim(ml%physicalModel(j))
-            print *,"    Thickness : ", ml%thickness(j)
+    call h5lexists_f(file_id, C_MULTILAYER, link_exists, hdferr, H5P_DEFAULT_F)
+    if(link_exists .eqv. .TRUE.) then
+        print *, "Reading Multi-Layers ..."
+        call allocate_children_name(file_id, C_MULTILAYER, children_name)
+        do i=1, size(children_name)
+            path = trim(C_MULTILAYER)//trim(children_name(i))
+            print *, " Multi-layer : ", children_name(i)
+            call multilayer_read(file_id, trim(path),ml)
+            print *, "    number of layers = ", ml%nblayers
+            do j=1, ml%nblayers
+                print *,"  Layer number : ",j
+                print *,"    Physical model : ", trim(ml%physicalModel(j))
+                elt = ""
+                elt = read_element_path(trim(ml%physicalModel(j)), 2)
+                if(elt == "grid") then
+                    print *,"        It is a grid material"
+                else if(elt == "volume") then
+                    print *,"        It is a classical volumic material"
+                endif
+                print *,"    Thickness : ", ml%thickness(j)
+            enddo
         enddo
-    enddo
+    endif
+    call h5lexists_f(file_id, C_GRID, link_exists, hdferr, H5P_DEFAULT_F)
+    if(link_exists .eqv. .TRUE.) then
+        print *, "Reading Grids ..."
+        call allocate_children_name(file_id, C_GRID, children_name)
+        do i=1, size(children_name)
+            path = trim(C_GRID)//trim(children_name(i))
+            print *, " Grid : ", children_name(i)
+            call grid_read(file_id, trim(path), grid)
+            print *, "    texture type = ", grid%textureType
+            if(grid%textureType == "woven") then
+                print *, "        surrounding material = ", &
+                            grid%wovengrid%surroundingmaterial
+                print *, "        grid material = ", &
+                            grid%wovengrid%gridmaterial
+                print *, "        pitch fiber = ", &
+                            grid%wovengrid%pitchFiber
+                print *, "        fiberPerPitch = ", &
+                            grid%wovengrid%fiberPerPitch
+                print *, "        wire section type = ", &
+                            grid%wovengrid%wireSectionType
+                if(grid%wovengrid%wireSectionType == "circular") then
+                    print *, "            diameter = ", &
+                              grid%wovengrid%diameterWire
+                else if(grid%wovengrid%wireSectionType == "rectangular") then
+                    print *, "            thickness = ", &
+                              grid%wovengrid%thicknessWire
+                    print *, "            width = ", &
+                              grid%wovengrid%widthWire
+                endif
+                print *, "        relative height = ", &
+                            grid%wovengrid%relativeHeight
+                print *, "        angle = ", &
+                            grid%wovengrid%angle
+            else if(grid%textureType == "comb") then
+                print *, "        surrounding material = ", &
+                            grid%combgrid%surroundingmaterial
+                print *, "        grid material = ", &
+                            grid%combgrid%gridmaterial
+                print *, "        shift = ", &
+                            grid%combgrid%shift
+                print *, "        wire section type = ", &
+                            grid%combgrid%wireSectionType
+                if(grid%combgrid%wireSectionType == "circular") then
+                    print *, "            diameter = ", &
+                              grid%combgrid%diameterWire
+                else if(grid%combgrid%wireSectionType == "rectangular") then
+                    print *, "            thickness = ", &
+                              grid%combgrid%thicknessWire
+                    print *, "            width = ", &
+                              grid%combgrid%widthWire
+                endif
+                print *,"        number of combs = ", &
+                           grid%combgrid%nbcombs
+                do j=1, grid%combgrid%nbcombs
+                    print *, "            comb number ",j
+                    print *, "                relative height = ", &
+                            grid%combgrid%relativeHeight(j)
+                    print *, "                angle = ", &
+                            grid%combgrid%angle(j)
+                enddo
+
+            endif
+        enddo
+    endif
     print *, "Reading physical volume models ..."
     call allocate_children_name(file_id, C_PHYSICAL_VOLUME, children_name)
     do i=1, size(children_name)

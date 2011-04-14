@@ -40,18 +40,19 @@ module amelethdf
     use arrayset_m, only : arrayset_t, read_arrayset => read, &
                            arrayset_to_string => to_string2
     use physicalmodel_m, only : C_PHYSICAL_MODEL, C_PHYSICAL_VOLUME, &
-                                C_MULTILAYER, &
+                                C_MULTILAYER, C_GRID,&
                                 physicalvolume_t, &
-                                multilayer_t, &
+                                multilayer_t, grid_t, &
                                 physicalvolume_read => read, &
                                 physicalvolume_clear_content => clear_content, &
-                                multilayer_read
+                                multilayer_read, grid_read
     use complextype_m, only : write_complex_attribute => write_attribute, &
                               read_complex_attribute => read_attribute, &
                               write_complex_type, &
                               write_complex_dataset => write_nd_dataset, &
                               read_1d_complex_dataset => read_dataset
-    use hdfpath_m, only : basename, dirname, exists, isleaf, isgroup, like, join
+    use hdfpath_m, only : basename, dirname, exists, isleaf, isgroup, like, join, &
+                          read_element_path => element
     use planewave_m, only : C_PLANE_WAVE, planewave_t, read_planewave => read, &
                             islinear, iselliptic, &
                             planewave_clear_content => clear_content
