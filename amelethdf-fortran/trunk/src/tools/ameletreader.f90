@@ -183,6 +183,24 @@ program ameletreader
                     print *, "                angle = ", &
                             grid%combgrid%angle(j)
                 enddo
+            else if(grid%textureType == "random") then
+                print *, "        surrounding material = ", &
+                           grid%randomgrid%surroundingmaterial
+                print *,"        number of random type = ", &
+                           grid%randomgrid%numberFillerType
+                do j=1, grid%randomgrid%numberFillerType
+                    print *, "            filler number ",j
+                    print *, "                grid material = ", &
+                            grid%randomgrid%gridmaterial(i)
+                    print *, "                vol fraction filler = ", &
+                            grid%randomgrid%volFractioFiller(j)
+                    print *, "                diameter wire = ", &
+                            grid%randomgrid%diameterWire(j)
+                    print *, "                length wire = ", &
+                            grid%randomgrid%lengthWire(j)
+                    print *, "                scale filler = ", &
+                            grid%randomgrid%scaleFiller(j)
+                enddo
 
             endif
         enddo

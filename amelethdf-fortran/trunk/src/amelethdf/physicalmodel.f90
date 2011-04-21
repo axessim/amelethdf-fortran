@@ -39,6 +39,9 @@ module physicalmodel_m
     character(len=*), parameter :: A_RELATIVE_HEIGHT = "relativeHeight"
     character(len=*), parameter :: A_ANGLE = "angle"
     character(len=*), parameter :: A_PITCH = "pitch"
+    character(len=*), parameter :: A_VOL_FRACTION_FILLER = "volFractioFiller"
+    character(len=*), parameter :: A_LENGTH_WIRE = "lengthWire"
+    character(len=*), parameter :: A_SCALE_FILLER = "scaleFiller"
     character(len=EL), dimension(:), allocatable :: children_name
 
     type physicalvolume_t
@@ -71,13 +74,12 @@ module physicalmodel_m
 
     type randomgrid_t
         character(len=AL) :: surroundingMaterial = ""
-        character(len=AL) :: gridMaterial = ""
-        integer(kind=4) :: nbrandom
+        character(len=AL), dimension(:), allocatable :: gridMaterial
         real(kind=4), dimension(:), allocatable :: volFractioFiller
         real(kind=4), dimension(:), allocatable :: diameterWire
         real(kind=4), dimension(:), allocatable :: lengthWire
         character(len=6), dimension(:), allocatable :: scaleFiller
-        integer(kind=4), dimension(:), allocatable :: numberFillerType
+        integer(kind=4) :: numberFillerType
     end type randomgrid_t
 
     type wovengrid_t
@@ -304,6 +306,67 @@ module physicalmodel_m
 
         end subroutine comb_read
 
+        subroutine random_read(file_id, path, randomgrid)
+            implicit none
+
+            integer(hid_t), intent(in) :: file_id
+            character(len=*), intent(in) :: path
+            type(randomgrid_t), intent(inout) :: randomgrid
+            character(len=EL) :: buf
+            logical :: ok
+            integer :: i
+            character(len=AL) :: path2 = ""
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_SURROUNDING_MATERIAL, buf)
+            randomgrid%surroundingMaterial = ""
+            randomgrid%surroundingMaterial = trim(buf)
+
+            if (allocated(children_name)) deallocate(children_name)
+            call read_children_name(file_id, path, children_name)
+            randomgrid%numberFillerType = size(children_name)
+            if (allocated(randomgrid%volFractioFiller)) &
+                    deallocate(randomgrid%volFractioFiller)
+            allocate(randomgrid%volFractioFiller(randomgrid%numberFillerType))
+            if (allocated(randomgrid%diameterWire)) &
+                    deallocate(randomgrid%diameterWire)
+            allocate(randomgrid%diameterWire(randomgrid%numberFillerType))
+            if (allocated(randomgrid%lengthWire)) &
+                    deallocate(randomgrid%lengthWire)
+            allocate(randomgrid%lengthWire(randomgrid%numberFillerType))
+            if (allocated(randomgrid%scaleFiller)) &
+                    deallocate(randomgrid%scaleFiller)
+            allocate(randomgrid%scaleFiller(randomgrid%numberFillerType))
+            if (allocated(randomgrid%gridMaterial)) &
+                    deallocate(randomgrid%gridMaterial)
+            allocate(randomgrid%gridMaterial(randomgrid%numberFillerType))
+
+            do i=1, size(children_name)
+                path2 = trim(path)//"/"//trim(children_name(i))
+                ok = read_float_attribute(file_id, path2, &
+                            A_VOL_FRACTION_FILLER,randomgrid%volFractioFiller(i), &
+                            .true.)
+                ok = read_float_attribute(file_id, path2, &
+                            A_DIAMETER_WIRE, randomgrid%diameterWire(i), &
+                            .true.)
+                ok = read_float_attribute(file_id, path2, &
+                            A_LENGTH_WIRE, randomgrid%lengthWire(i), &
+                            .true.)
+                buf = ""
+                ok = read_string_attr(file_id, path, A_SCALE_FILLER, buf)
+                randomgrid%scaleFiller(i) = ""
+                randomgrid%scaleFiller(i) = trim(buf)
+
+                buf = ""
+                ok = read_string_attr(file_id, path, A_GRID_MATERIAL, buf)
+                randomgrid%gridMaterial(i) = ""
+                randomgrid%gridMaterial(i) = trim(buf)
+
+            enddo
+
+
+        end subroutine random_read
+
         subroutine grid_read(file_id, path, grid)
             implicit none
 
@@ -323,6 +386,8 @@ module physicalmodel_m
                 call woven_read(file_id, path, grid%wovengrid)
             else if(grid%textureType == "comb") then
                 call comb_read(file_id, path, grid%combgrid)
+            else if(grid%textureType == "random") then
+                call random_read(file_id, path, grid%randomgrid)
             endif
 
         end subroutine grid_read
