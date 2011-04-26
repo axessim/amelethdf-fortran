@@ -32,6 +32,7 @@ module unstructuredmesh_m
     character(len=*), parameter :: TC_V2 = "v2"
     character(len=*), parameter :: TC_V3 = "v3"
     character(len=*), parameter :: L_ELEMENTS = "/elements"
+    character(len=*), parameter :: A_POINT_IN_ELEMENT = "pointInElement"
 
     type selector_on_mesh_node_t
         character(len=EL), dimension(:), allocatable :: short_name
@@ -43,6 +44,12 @@ module unstructuredmesh_m
         integer, dimension(:), allocatable  :: index
         real, dimension(:), allocatable  :: v1, v2, v3
     end type selector_on_mesh_element_t
+
+    type selector_on_mesh_ptinelt_t
+        character(len=EL)  :: name
+        integer, dimension(:), allocatable  :: index
+        real, dimension(:), allocatable  :: v1, v2, v3
+    end type selector_on_mesh_ptinelt_t
 
     type group_t
         character(len=AL) :: name = ""
@@ -59,8 +66,9 @@ module unstructuredmesh_m
         integer, dimension(:), allocatable :: element_nodes
         type(group_t), dimension(:), allocatable :: groups
         type(groupgroup_t), dimension(:), allocatable :: groupgroups
-        type(selector_on_mesh_node_t) :: som_node
-        type(selector_on_mesh_element_t) :: som_element
+!        type(selector_on_mesh_node_t) :: som_node
+!        type(selector_on_mesh_element_t) :: som_element
+        type(selector_on_mesh_ptinelt_t), dimension(:), allocatable :: som_ptinelt
     end type unstructured_mesh_t
 
     contains
@@ -75,12 +83,15 @@ module unstructuredmesh_m
             integer(hsize_t), dimension(2) :: two_dims
             integer(hsize_t), dimension(1) :: one_dims
 
-            integer :: i, n
+            integer :: i, j, n, nb
             character(len=AL) :: path
             character(len=AL) :: group_path
             character(len=EL), dimension(:), allocatable :: group_name
+            character(len=EL), dimension(:), allocatable :: children_name
+            character(len=EL) :: sem_type =""
 
             integer, dimension(:), allocatable :: tmpelements
+            logical :: here
 
 
             call clear_content(umesh)
@@ -171,20 +182,52 @@ module unstructuredmesh_m
             path = trim(mesh_path)//SELECTOR_ON_MESH
             if (exists(file_id, path)) then
                 ! selectorOnMesh/nodes
-                path = ""
-                path = trim(mesh_path)//SELECTOR_ON_MESH//NODES
-                if (exists(file_id, path)) then
-                    call read_selector_on_mesh_node(file_id, trim(path), &
-                                                    umesh%som_node)
-                endif
+!                path = ""
+!                path = trim(mesh_path)//SELECTOR_ON_MESH//NODES
+!                if (exists(file_id, path)) then
+!                    call read_selector_on_mesh_node(file_id, trim(path), &
+!                                                    umesh%som_node)
+!                endif
 
                 ! selectorOnMesh/elements
+!                path = ""
+!                path = trim(mesh_path)//SELECTOR_ON_MESH//L_ELEMENTS
+!                if (exists(file_id, path)) then
+!                    call read_selector_on_mesh_element(file_id, trim(path), &
+!                                                       umesh%som_element)
+!                endif
+                !selectorOnMesh/point in element
                 path = ""
-                path = trim(mesh_path)//SELECTOR_ON_MESH//L_ELEMENTS
-                if (exists(file_id, path)) then
-                    call read_selector_on_mesh_element(file_id, trim(path), &
-                                                       umesh%som_element)
+                path = trim(mesh_path)//SELECTOR_ON_MESH
+                if(allocated(children_name)) deallocate(children_name)
+                call read_children_name(file_id, path, children_name)
+                n = size(children_name)
+                nb = 0
+                do i=1,n
+                    path = ""
+                    path = trim(mesh_path)//SELECTOR_ON_MESH//"/"//children_name(i)
+                    sem_type = ""
+                    here = read_attribute(file_id, path, "type", sem_type)
+                    if(sem_type == A_POINT_IN_ELEMENT) nb=nb+1
+                enddo
+                if(nb>0) then
+                    if(allocated(umesh%som_ptinelt)) deallocate(umesh%som_ptinelt)
+                    allocate(umesh%som_ptinelt(nb))
+                    j = 0
+                    do i = 1,n
+                        path = ""
+                        path = trim(mesh_path)//SELECTOR_ON_MESH//"/"//children_name(i)
+                        sem_type = ""
+                        here = read_attribute(file_id, path, "type", sem_type)
+                        if(sem_type == A_POINT_IN_ELEMENT) then
+                            j = j+1
+                            umesh%som_ptinelt(j)%name = children_name(i)
+                            call read_selector_on_mesh_ptinelt(file_id, path, &
+                                                       umesh%som_ptinelt(j))
+                        endif
+                    enddo
                 endif
+                 
             endif
         end subroutine read
 
@@ -368,15 +411,81 @@ module unstructuredmesh_m
             deallocate(field_names, field_sizes, field_offsets, cbuf)
         end subroutine read_selector_on_mesh_element
 
+        ! read selector on mesh / point in element
+        ! the selector on mesh element is a table (index, v1, v2, v3)
+        ! index is an integer
+        ! v1, v2, v3 are real
+        subroutine read_selector_on_mesh_ptinelt(file_id, path, somptinelt)
+            integer(hid_t), intent(in) :: file_id
+            character(len=*), intent(in) :: path
+            type(selector_on_mesh_ptinelt_t), intent(inout) :: somptinelt
+
+            integer(hsize_t) :: nrecords, nfields, start
+            integer(size_t) :: type_size
+            integer(size_t), dimension(:), allocatable :: field_sizes
+            integer(size_t), dimension(:), allocatable :: field_offsets
+
+            integer :: i
+            character(len=EL), dimension(:), allocatable :: cbuf
+
+            call h5tbget_table_info_f(file_id, path, nfields, nrecords, hdferr)
+            call check(MSIG//"Can't read table info for"//path)
+
+            allocate(field_sizes(nfields))
+            allocate(field_offsets(nfields))
+
+            allocate(cbuf(nrecords))
+            start = 0
+            type_size = EL
+
+            if (allocated(somptinelt%index)) deallocate(somptinelt%index)
+            allocate(somptinelt%index(nrecords))
+            start = 0
+            call h5tget_size_f(H5T_NATIVE_INTEGER, type_size, hdferr)
+            call h5tbread_field_name_f(file_id, path, TC_INDEX, &
+                                       start, nrecords, type_size, &
+                                       somptinelt%index, hdferr)
+            call check(MSIG//"Can't field values for"//path//"#"//TC_INDEX)
+
+            if (allocated(somptinelt%v1)) deallocate(somptinelt%v1)
+            allocate(somptinelt%v1(nrecords))
+            start = 0
+            call h5tget_size_f(H5T_NATIVE_REAL, type_size, hdferr)
+            call h5tbread_field_name_f(file_id, path, TC_V1, &
+                                       start, nrecords, type_size, &
+                                       somptinelt%v1, hdferr)
+            call check(MSIG//"Can't field values for"//path//"#"//TC_V1)
+
+            if (allocated(somptinelt%v2)) deallocate(somptinelt%v2)
+            allocate(somptinelt%v2(nrecords))
+            start = 0
+            call h5tget_size_f(H5T_NATIVE_REAL, type_size, hdferr)
+            call h5tbread_field_name_f(file_id, path, TC_V2, &
+                                       start, nrecords, type_size, &
+                                       somptinelt%v2, hdferr)
+            call check(MSIG//"Can't field values for"//path//"#"//TC_V2)
+
+            if (allocated(somptinelt%v3)) deallocate(somptinelt%v3)
+            allocate(somptinelt%v3(nrecords))
+            start = 0
+            call h5tget_size_f(H5T_NATIVE_REAL, type_size, hdferr)
+            call h5tbread_field_name_f(file_id, path, TC_V3, &
+                                       start, nrecords, type_size, &
+                                       somptinelt%v3, hdferr)
+            call check(MSIG//"Can't field values for"//path//"#"//TC_V3)
+
+            deallocate( field_sizes, field_offsets, cbuf)
+        end subroutine read_selector_on_mesh_ptinelt
+
         ! Print subroutines
 
         ! Prints an unstructured mesh to the console
         subroutine printt(umesh)
             type(unstructured_mesh_t), intent(in) :: umesh
 
-            integer :: i, offset = 1
+            integer :: i,j, offset = 1
             integer(kind=8) :: element_type
-            integer :: nb
+            integer :: nb, nb2
 
             print *
             print *
@@ -449,28 +558,45 @@ module unstructuredmesh_m
 
             ! SelectorOnMesh/nodes
             nb = 0
-            if (allocated(umesh%som_node%short_name)) &
-                nb = size(umesh%som_node%short_name)
-            print *
-            print *, "Selector on mesh / nodes ..."
-            do i=1,nb
-                print *, "shortName : ", trim(umesh%som_node%short_name(i)), &
-                         ", index : ", umesh%som_node%index(i)
-            enddo
+!            if (allocated(umesh%som_node%short_name)) &
+!                nb = size(umesh%som_node%short_name)
+!            print *
+!            print *, "Selector on mesh / nodes ..."
+!            do i=1,nb
+!                print *, "shortName : ", trim(umesh%som_node%short_name(i)), &
+!                         ", index : ", umesh%som_node%index(i)
+!            enddo
 
             ! SelectorOnMesh/elements
+!            nb = 0
+!            if (allocated(umesh%som_element%short_name)) &
+!                nb = size(umesh%som_element%short_name)
+!            print *
+!            print *, "Selector on mesh / elements ..."
+!            do i=1,nb
+!                print *, "shortName : ", trim(umesh%som_element%short_name(i)), &
+!                         ", index : ", umesh%som_element%index(i), &
+!                         ", v1 : ", umesh%som_element%v1(i), &
+!                         ", v2 : ", umesh%som_element%v2(i), &
+!                         ", v3 : ", umesh%som_element%v3(i)
+!            enddo
+            ! SelectorOnMesh/pt in elements
             nb = 0
-            if (allocated(umesh%som_element%short_name)) &
-                nb = size(umesh%som_element%short_name)
+            if (allocated(umesh%som_ptinelt)) &
+                nb = size(umesh%som_ptinelt)
             print *
-            print *, "Selector on mesh / elements ..."
+            print *, "Selector on mesh / point in elements ..."
             do i=1,nb
-                print *, "shortName : ", trim(umesh%som_element%short_name(i)), &
-                         ", index : ", umesh%som_element%index(i), &
-                         ", v1 : ", umesh%som_element%v1(i), &
-                         ", v2 : ", umesh%som_element%v2(i), &
-                         ", v3 : ", umesh%som_element%v3(i)
+                print *, "name : ", trim(umesh%som_ptinelt(i)%name)
+                nb2 = size(umesh%som_ptinelt(i)%index)
+                do j=1,nb2
+                    print *, " index : ", umesh%som_ptinelt(i)%index(j), &
+                         ", v1 : ", umesh%som_ptinelt(i)%v1(j), &
+                         ", v2 : ", umesh%som_ptinelt(i)%v2(j), &
+                         ", v3 : ", umesh%som_ptinelt(i)%v3(j)
+                enddo
             enddo
+
         end subroutine printt
 
         ! Look for a group in mesh with a given name
@@ -615,6 +741,18 @@ module unstructuredmesh_m
             if (allocated(some%v3)) deallocate(some%v3)
         end subroutine selector_on_mesh_element_clear_content
 
+        subroutine selector_on_mesh_ptinelt_clear_content(somptinelt)
+            type(selector_on_mesh_ptinelt_t), intent(inout) :: somptinelt
+           
+            
+            somptinelt%name=""
+            if(allocated(somptinelt%index)) deallocate(somptinelt%index)
+            if(allocated(somptinelt%v1)) deallocate(somptinelt%v1)
+            if(allocated(somptinelt%v2)) deallocate(somptinelt%v2)
+            if(allocated(somptinelt%v3)) deallocate(somptinelt%v3)
+
+        end subroutine selector_on_mesh_ptinelt_clear_content
+
         subroutine group_clear_content(group)
             type(group_t), intent(inout) :: group
 
@@ -634,7 +772,6 @@ module unstructuredmesh_m
             if (allocated(umesh%elements)) deallocate(umesh%elements)
             if (allocated(umesh%offsets)) deallocate(umesh%offsets)
             if (allocated(umesh%element_nodes)) deallocate(umesh%element_nodes)
-
             if (allocated(umesh%groups)) then
                 do i=1,size(umesh%groups)
                     call group_clear_content(umesh%groups(i))
@@ -649,7 +786,13 @@ module unstructuredmesh_m
                 deallocate(umesh%groupgroups)
             endif
 
-            call selector_on_mesh_node_clear_content(umesh%som_node)
-            call selector_on_mesh_element_clear_content(umesh%som_element)
+            !call selector_on_mesh_node_clear_content(umesh%som_node)
+            !call selector_on_mesh_element_clear_content(umesh%som_element)
+            if(allocated(umesh%som_ptinelt)) then
+                do i=1,size(umesh%som_ptinelt)
+                    call selector_on_mesh_ptinelt_clear_content(umesh%som_ptinelt(i))
+                enddo
+                deallocate(umesh%som_ptinelt)
+            endif
         end subroutine clear_content
 end module unstructuredmesh_m
