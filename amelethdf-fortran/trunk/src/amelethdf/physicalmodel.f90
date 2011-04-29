@@ -42,6 +42,7 @@ module physicalmodel_m
     character(len=*), parameter :: A_VOL_FRACTION_FILLER = "volFractioFiller"
     character(len=*), parameter :: A_LENGTH_WIRE = "lengthWire"
     character(len=*), parameter :: A_SCALE_FILLER = "scaleFiller"
+    character(len=*), parameter :: A_TYPE_FILLER = "typeFiller"
     character(len=EL), dimension(:), allocatable :: children_name
 
     type physicalvolume_t
@@ -79,6 +80,7 @@ module physicalmodel_m
         real(kind=4), dimension(:), allocatable :: diameterWire
         real(kind=4), dimension(:), allocatable :: lengthWire
         character(len=6), dimension(:), allocatable :: scaleFiller
+        character(len=7), dimension(:), allocatable :: typeFiller
         integer(kind=4) :: numberFillerType
     end type randomgrid_t
 
@@ -193,7 +195,7 @@ module physicalmodel_m
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(wovengrid_t), intent(inout) :: wovengrid
-            character(len=EL) :: buf
+            character(len=AL) :: buf
             logical :: ok
             integer :: i
             character(len=AL) :: path2 = ""
@@ -249,7 +251,7 @@ module physicalmodel_m
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(combgrid_t), intent(inout) :: combgrid
-            character(len=EL) :: buf
+            character(len=AL) :: buf 
             logical :: ok
             integer :: i
             character(len=AL) :: path2 = ""
@@ -312,7 +314,7 @@ module physicalmodel_m
             integer(hid_t), intent(in) :: file_id
             character(len=*), intent(in) :: path
             type(randomgrid_t), intent(inout) :: randomgrid
-            character(len=EL) :: buf
+            character(len=AL) :: buf
             logical :: ok
             integer :: i
             character(len=AL) :: path2 = ""
@@ -340,6 +342,11 @@ module physicalmodel_m
             if (allocated(randomgrid%gridMaterial)) &
                     deallocate(randomgrid%gridMaterial)
             allocate(randomgrid%gridMaterial(randomgrid%numberFillerType))
+            if (allocated(randomgrid%typeFiller)) &
+                    deallocate(randomgrid%typeFiller)
+            allocate(randomgrid%typeFiller(randomgrid%numberFillerType))
+            
+            
 
             do i=1, size(children_name)
                 path2 = trim(path)//"/"//trim(children_name(i))
@@ -353,14 +360,19 @@ module physicalmodel_m
                             A_LENGTH_WIRE, randomgrid%lengthWire(i), &
                             .true.)
                 buf = ""
-                ok = read_string_attr(file_id, path, A_SCALE_FILLER, buf)
+                ok = read_string_attr(file_id, path2, A_SCALE_FILLER, buf)
                 randomgrid%scaleFiller(i) = ""
                 randomgrid%scaleFiller(i) = trim(buf)
 
                 buf = ""
-                ok = read_string_attr(file_id, path, A_GRID_MATERIAL, buf)
+                ok = read_string_attr(file_id, path2, A_GRID_MATERIAL, buf)
                 randomgrid%gridMaterial(i) = ""
                 randomgrid%gridMaterial(i) = trim(buf)
+                
+                buf = ""
+                ok = read_string_attr(file_id, path2, A_TYPE_FILLER, buf)
+                randomgrid%typeFiller(i) = ""
+                randomgrid%typeFiller(i) = trim(buf)
 
             enddo
 
