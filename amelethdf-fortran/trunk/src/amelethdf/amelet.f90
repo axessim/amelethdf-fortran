@@ -26,6 +26,7 @@ module amelethdf
                                  smesh_print => printt, &
                                  structured_mesh_t
     use simulation_m, only : read_simulation => read, &
+                             write_simulation => write, &
                              simulation_clear_content => clear_content, &
                              print_simulation => printt, &
                              C_SIMULATION, &
