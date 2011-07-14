@@ -14,5 +14,5 @@ SET_TARGET_PROPERTIES( amelethdf  PROPERTIES OUTPUT_NAME "amelethdff")
 INSTALL(TARGETS amelethdf ARCHIVE DESTINATION "lib")
 
 FILE(GLOB amelethdf_module ${CMAKE_CURRENT_BINARY_DIR}/*.mod)
-INSTALL(FILES ${amelethdf_module} DESTINATION "include")
+INSTALL(FILES ${amelethdf_module} DESTINATION include)
 

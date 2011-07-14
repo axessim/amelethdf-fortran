@@ -4,7 +4,7 @@ module amelethdf_m
     implicit none
 
     character(len=*), parameter :: MSIG = "[amelethdf]"
-    integer, parameter :: ELEMENT_NAME_LENGTH = 30, &
+    integer, parameter :: ELEMENT_NAME_LENGTH = 50, &
                           ABSOLUTE_PATH_NAME_LENGTH = 100
     ! error flag
     integer :: hdferr

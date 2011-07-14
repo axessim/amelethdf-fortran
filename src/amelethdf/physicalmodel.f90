@@ -85,16 +85,18 @@ module physicalmodel_m
     end type randomgrid_t
 
     type wovengrid_t
-        real(kind=4) :: relativeHeight
-        real(kind=4) :: angle
+        integer(kind=4) :: nbcombs
+        real(kind=4), dimension(:), allocatable :: relativeHeight
+        real(kind=4), dimension(:), allocatable :: angle
         character(len=AL) :: surroundingMaterial = ""
         character(len=AL) :: gridMaterial = ""
         character(len=12) :: wireSectionType = ""
-        real(kind=4)  :: thicknessWire
-        real(kind=4)  :: widthWire
-        real(kind=4)  :: diameterWire
+        real(kind=4) :: thicknessWire
+        real(kind=4) :: widthWire
+        real(kind=4) :: diameterWire
         real(kind=4)  :: pitchFiber
         integer(kind=4) :: fiberPerPitch
+        real(kind=4), dimension(:), allocatable :: volFractioFiller
     end type wovengrid_t
 
     type grid_t
@@ -231,13 +233,26 @@ module physicalmodel_m
                                       wovengrid%fiberPerPitch, .true.)
             if (allocated(children_name)) deallocate(children_name)
             call read_children_name(file_id, path, children_name)
+            wovengrid%nbcombs=size(children_name)
+            if (allocated(wovengrid%volFractioFiller)) &
+                    deallocate(wovengrid%volFractioFiller)
+            allocate(wovengrid%volFractioFiller(wovengrid%nbcombs))
+            if (allocated(wovengrid%relativeHeight)) &
+                    deallocate(wovengrid%relativeHeight)
+            allocate(wovengrid%relativeHeight(wovengrid%nbcombs))
+            if (allocated(wovengrid%angle)) &
+                    deallocate(wovengrid%angle)
+            allocate(wovengrid%angle(wovengrid%nbcombs))
             do i=1, size(children_name)
                 path2 = trim(path)//"/"//trim(children_name(i))
                 ok = read_float_attribute(file_id, path2, &
-                            A_RELATIVE_HEIGHT, wovengrid%relativeHeight, &
+                            A_RELATIVE_HEIGHT, wovengrid%relativeHeight(i), &
                             .true.)
                 ok = read_float_attribute(file_id, path2, &
-                            A_ANGLE, wovengrid%angle, &
+                            A_ANGLE, wovengrid%angle(i), &
+                            .true.)
+                ok = read_float_attribute(file_id, path2, &
+                            A_VOL_FRACTION_FILLER, wovengrid%volFractioFiller(i), &
                             .true.)
             enddo
 
