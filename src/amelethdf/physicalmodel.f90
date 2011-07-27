@@ -373,7 +373,7 @@ module physicalmodel_m
                             .true.)
                 ok = read_float_attribute(file_id, path2, &
                             A_LENGTH_WIRE, randomgrid%lengthWire(i), &
-                            .true.)
+                            .false.)
                 buf = ""
                 ok = read_string_attr(file_id, path2, A_SCALE_FILLER, buf)
                 randomgrid%scaleFiller(i) = ""
