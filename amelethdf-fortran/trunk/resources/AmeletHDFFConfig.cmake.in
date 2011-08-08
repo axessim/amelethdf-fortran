@@ -1,0 +1,16 @@
+# - Config file for the AmeletHDF Fortran package
+# It defines the following variables
+#  AMELET_HDF_F_INCLUDE_DIRS - The AxesSign include directories
+#  AMELET_HDF_F_LIBRARIES    - Libraries to link against
+#  AMELET_HDF_F_EXECUTABLE   - The executables
+ 
+# Tell the user project where to find our headers and libraries
+set(AMELET_HDF_F_INCLUDE_DIRS "@AMELET_HDF_F_INCLUDE_DIRS@")
+set(AMELET_HDF_F_LIBRARY_DIRS "@AMELET_HDF_F_LIB_DIR@")
+ 
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("@AMELET_HDF_F_CMAKE_DIR@/AmeletHDFFLibraryDepends.cmake")
+ 
+# These are IMPORTED targets created by AxesSignLibraryDepends.cmake
+set(AMELET_HDF_F_LIBRARIES @tools_lib_dep@)
+set(AMELET_HDF_F_EXECUTABLE ameletreader)
