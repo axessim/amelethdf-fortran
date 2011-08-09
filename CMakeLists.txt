@@ -16,6 +16,11 @@ MESSAGE( STATUS "Configuration is ${CMAKE_BUILD_TYPE}"  )
 #-------------------------------------------------------------
 # Offer the user the choice of overriding the installation directories
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
+IF (WIN32)
+	set(INSTALL_ARCHIVE_DIR lib/static CACHE PATH "Installation directory for libraries")
+ELSE ()
+    set(INSTALL_ARCHIVE_DIR lib CACHE PATH "Installation directory for libraries")
+ENDIF ()
 set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
 set(INSTALL_INCLUDE_DIR include CACHE PATH
   "Installation directory for header files")
@@ -23,7 +28,7 @@ set(INSTALL_DATA_DIR share CACHE PATH
   "Installation directory for data files")
  
 # Make relative paths absolute (needed later on)
-foreach(p LIB BIN INCLUDE DATA)
+foreach(p LIB ARCHIVE BIN INCLUDE DATA)
   set(var INSTALL_${p}_DIR)
   if(NOT IS_ABSOLUTE "${${var}}")
     set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
@@ -50,7 +55,7 @@ SET(amelethdf_lib_dep
   hdf5_hl_fortran hdf5_hl_f90cstub 
   hdf5_fortran hdf5_f90cstub 
   hdf5)
-SET(tools_lib_dep amelethdf ${amelethdf_lib_dep})
+SET(tools_lib_dep amelethdf_so ${amelethdf_lib_dep})
 
 
 #-------------------------------------------------------------
