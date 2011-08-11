@@ -61,7 +61,7 @@ module amelethdf
                             generator_clear_content => clear_content
     use floatingtype_m, only : floatingtype_t, read_floatingtype => read, &
                                issinglereal, issinglecomplex, isvector, &
-                               convert_to_real_vector, set_floating_type
+                               isarrayset,convert_to_real_vector, set_floating_type
     use stringdataset_m, only : get_dataset_lmn, read_string_dataset1, &
                                 read_string_vector => read_vector, &
                                 write_string_dataset => write_nd_dataset

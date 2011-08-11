@@ -43,6 +43,8 @@ module physicalmodel_m
     character(len=*), parameter :: A_LENGTH_WIRE = "lengthWire"
     character(len=*), parameter :: A_SCALE_FILLER = "scaleFiller"
     character(len=*), parameter :: A_TYPE_FILLER = "typeFiller"
+    character(len=*), parameter :: A_MODEL_TYPE = "modelType"
+    character(len=*), parameter :: A_ISOTROPIC_TYPE = "isotropicType"
     character(len=EL), dimension(:), allocatable :: children_name
 
     type physicalvolume_t
@@ -71,6 +73,8 @@ module physicalmodel_m
         real(kind=4)  :: thicknessWire
         real(kind=4)  :: widthWire
         real(kind=4)  :: diameterWire
+        character(len=AL) :: modelType = ""
+        character(len=AL) :: isotropicType = ""
     end type combgrid_t
 
     type randomgrid_t
@@ -97,6 +101,8 @@ module physicalmodel_m
         real(kind=4)  :: pitchFiber
         integer(kind=4) :: fiberPerPitch
         real(kind=4), dimension(:), allocatable :: volFractioFiller
+        character(len=AL) :: modelType = ""
+        character(len=AL) :: isotropicType = ""
     end type wovengrid_t
 
     type grid_t
@@ -216,6 +222,17 @@ module physicalmodel_m
             ok = read_string_attr(file_id, path, A_WIRE_SECTION_TYPE, buf)
             wovengrid%wireSectionType = ""
             wovengrid%wireSectionType = trim(buf)
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_MODEL_TYPE, buf)
+            wovengrid%modelType = ""
+            wovengrid%modelType = trim(buf)
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_ISOTROPIC_TYPE, buf)
+            wovengrid%isotropicType = ""
+            wovengrid%isotropicType = trim(buf)
+
             if(wovengrid%wireSectionType == "rectangular") then
                 ok = read_float_attribute(file_id, path, A_THICKNESS_WIRE, &
                                           wovengrid%thicknessWire, .true.)
@@ -285,6 +302,18 @@ module physicalmodel_m
             ok = read_string_attr(file_id, path, A_WIRE_SECTION_TYPE, buf)
             combgrid%wireSectionType = ""
             combgrid%wireSectionType = trim(buf)
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_MODEL_TYPE, buf)
+            combgrid%modelType = ""
+            combgrid%modelType = trim(buf)
+
+            buf = ""
+            ok = read_string_attr(file_id, path, A_ISOTROPIC_TYPE, buf)
+            combgrid%isotropicType = ""
+            combgrid%isotropicType = trim(buf)
+
+
             if(combgrid%wireSectionType == "rectangular") then
                 ok = read_float_attribute(file_id, path, A_THICKNESS_WIRE, &
                                           combgrid%thicknessWire, .true.)
