@@ -29,6 +29,8 @@ program ameletreader
     type(globalenvironment_t) :: ge
     type(grid_t) :: grid
     logical :: link_exists
+    type(vector_t) :: mydim
+
 
 
     ! Write working directory
@@ -218,6 +220,25 @@ program ameletreader
         if (issinglecomplex(pv%relative_permeability)) then
             print *, "  Relative permittivity :", trim( &
                 singlecomplex_to_string(pv%relative_permeability%singlecomplex))
+        endif
+        if (isarrayset(pv%electric_conductivity)) then
+            print *, "  Electric conductivy  : "
+            print *, "         label : ", &
+                 pv%electric_conductivity%arrayset%single%label
+            print *, "         physical nature : ", &
+                 pv%electric_conductivity%arrayset%single%physical_nature
+            print *, "         nb dims : ",&
+                 size(pv%electric_conductivity%arrayset%dims)
+            do j=1, size(pv%electric_conductivity%arrayset%dims)
+                print *,"          dim",j,":"
+                print *,"          physical nature :",&
+                pv%electric_conductivity%arrayset%dims(j)%single%physical_nature
+                if(allocated(pv%electric_conductivity%arrayset%dims(j)%rvalue))then
+                 print *, pv%electric_conductivity%arrayset%dims(j)%rvalue(:)
+                endif
+                print *,"data :", pv%electric_conductivity%arrayset%data%cvalue(:)
+                
+            enddo
         endif
         if (issinglereal(pv%electric_conductivity)) then
             print *, "  Electric conductivy  : ", trim( &
