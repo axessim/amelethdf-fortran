@@ -98,7 +98,16 @@ program write_an_arrayset
     call h5fcreate_f(filename, H5F_ACC_TRUNC_F, file_id, hdferr, &
                      H5P_DEFAULT_F, H5P_DEFAULT_F)
     call check("Can't create "//trim(filename))
+    print *, "Writes /@FORMAT ..."
+    call h5ltset_attribute_string_f(file_id, "/", &
+                                    "FORMAT", "AMELETHDF", hdferr)
+    call check("Can't write type attribute for /")
 
+    ! Writes AMELETHDF_FORMAT_VERSION attribute
+    print *, "Writes /@AMELETHDF_FORMAT_VERSION ..."
+    call h5ltset_attribute_string_f(file_id, "/", &
+                                    "AMELETHDF_FORMAT_VERSION", "1.5.0", hdferr)
+    call check("Can't write type attribute for /")
     ! floatingType group creation
     print *, "Creates /floatingType group creation ..."
     call h5gcreate_f(file_id, "floatingType", grp_id, hdferr)
