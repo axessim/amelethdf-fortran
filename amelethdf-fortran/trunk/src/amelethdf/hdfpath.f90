@@ -261,6 +261,7 @@ module hdfpath_m
 
         ! Return true if a path looks like a patter
         ! For "/foo/bar/baz" & "/foo/*/baz" return true
+        ! For "/foo/bar" & "/foo/*/*" return false
         recursive function like(path, pattern) result (res)
             character(len=*), intent(in) :: path
             character(len=*), intent(in) :: pattern
@@ -271,7 +272,8 @@ module hdfpath_m
 
             buf1 = lsplit(path)
             buf2 = lsplit(pattern)
-            if (buf1(1) == buf2(1) .or. buf2(1) == "*") then
+            if (buf1(1) == buf2(1) &
+                 .or. (buf2(1) == "*" .and. buf1(1).ne."")) then
                 if (buf1(2) == "" .and. buf2(2) == "") then
                     res = .true.
                 else
