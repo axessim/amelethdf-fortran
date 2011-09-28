@@ -451,7 +451,7 @@ module unstructuredmesh_m
             allocate(somptinelt%v1(nrecords))
             start = 0
             call h5tget_size_f(H5T_NATIVE_REAL, type_size, hdferr)
-            call h5tbread_field_name_f(file_id, path, TC_V1, &
+            call h5tbread_field_index_f(file_id, path, 2, &
                                        start, nrecords, type_size, &
                                        somptinelt%v1, hdferr)
             call check(MSIG//"Can't field values for"//path//"#"//TC_V1)
@@ -460,7 +460,7 @@ module unstructuredmesh_m
             allocate(somptinelt%v2(nrecords))
             start = 0
             call h5tget_size_f(H5T_NATIVE_REAL, type_size, hdferr)
-            call h5tbread_field_name_f(file_id, path, TC_V2, &
+            call h5tbread_field_index_f(file_id, path, 3, &
                                        start, nrecords, type_size, &
                                        somptinelt%v2, hdferr)
             call check(MSIG//"Can't field values for"//path//"#"//TC_V2)
@@ -469,11 +469,11 @@ module unstructuredmesh_m
             allocate(somptinelt%v3(nrecords))
             start = 0
             call h5tget_size_f(H5T_NATIVE_REAL, type_size, hdferr)
-            call h5tbread_field_name_f(file_id, path, TC_V3, &
+            call h5tbread_field_index_f(file_id, path, 4, &
                                        start, nrecords, type_size, &
                                        somptinelt%v3, hdferr)
             call check(MSIG//"Can't field values for"//path//"#"//TC_V3)
-
+            
             deallocate( field_sizes, field_offsets, cbuf)
         end subroutine read_selector_on_mesh_ptinelt
 
