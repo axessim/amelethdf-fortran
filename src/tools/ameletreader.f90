@@ -143,21 +143,22 @@ program ameletreader
                             grid%wovengrid%pitchFiber
                 print *, "        fiberPerPitch = ", &
                             grid%wovengrid%fiberPerPitch
-                print *, "        wire section type = ", &
-                            grid%wovengrid%wireSectionType
-                if(grid%wovengrid%wireSectionType == "circular") then
-                    print *, "            diameter = ", &
-                              grid%wovengrid%diameterWire
-                else if(grid%wovengrid%wireSectionType == "rectangular") then
-                    print *, "            thickness = ", &
-                              grid%wovengrid%thicknessWire
-                    print *, "            width = ", &
-                              grid%wovengrid%widthWire
-                endif
                 print *, "        relative height = ", &
                             grid%wovengrid%relativeHeight
                 print *, "        angle = ", &
                             grid%wovengrid%angle
+                do j=1, grid%wovengrid%nbcombs
+                    print *, "            wire number ",j
+                    if(grid%wovengrid%wireSectionType(j) == "circular") then
+                        print *, "            diameter = ", &
+                                  grid%wovengrid%diameterWire(j)
+                    else if(grid%wovengrid%wireSectionType(j) == "rectangular") then
+                        print *, "            thickness = ", &
+                                  grid%wovengrid%thicknessWire(j)
+                        print *, "            width = ", &
+                                  grid%wovengrid%widthWire(j)
+                    endif
+                enddo
             else if(grid%textureType == "comb") then
                 print *, "        surrounding material = ", &
                             grid%combgrid%surroundingmaterial
@@ -165,17 +166,6 @@ program ameletreader
                             grid%combgrid%gridmaterial
                 print *, "        shift = ", &
                             grid%combgrid%shift
-                print *, "        wire section type = ", &
-                            grid%combgrid%wireSectionType
-                if(grid%combgrid%wireSectionType == "circular") then
-                    print *, "            diameter = ", &
-                              grid%combgrid%diameterWire
-                else if(grid%combgrid%wireSectionType == "rectangular") then
-                    print *, "            thickness = ", &
-                              grid%combgrid%thicknessWire
-                    print *, "            width = ", &
-                              grid%combgrid%widthWire
-                endif
                 print *,"        number of combs = ", &
                            grid%combgrid%nbcombs
                 do j=1, grid%combgrid%nbcombs
@@ -184,6 +174,19 @@ program ameletreader
                             grid%combgrid%relativeHeight(j)
                     print *, "                angle = ", &
                             grid%combgrid%angle(j)
+                    print *, "        wire section type = ", &
+                            grid%combgrid%wireSectionType
+
+                    if(grid%combgrid%wireSectionType(j) == "circular") then
+                        print *, "            diameter = ", &
+                                  grid%combgrid%diameterWire(j)
+                    else if(grid%combgrid%wireSectionType(j) == "rectangular") then
+                        print *, "            thickness = ", &
+                                  grid%combgrid%thicknessWire(j)
+                        print *, "            width = ", &
+                                  grid%combgrid%widthWire(j)
+                endif
+
                 enddo
             else if(grid%textureType == "random") then
                 print *, "        surrounding material = ", &
