@@ -68,11 +68,11 @@ module physicalmodel_m
         real(kind=4), dimension(:), allocatable :: pitch
         character(len=AL) :: surroundingMaterial = ""
         character(len=AL) :: gridMaterial = ""
-        character(len=12) :: wireSectionType = ""
+        character(len=12), dimension(:), allocatable :: wireSectionType
         real(kind=4)  :: shift
-        real(kind=4)  :: thicknessWire
-        real(kind=4)  :: widthWire
-        real(kind=4)  :: diameterWire
+        real(kind=4), dimension(:), allocatable  :: thicknessWire
+        real(kind=4), dimension(:), allocatable  :: widthWire
+        real(kind=4), dimension(:), allocatable  :: diameterWire
         character(len=AL) :: modelType = ""
         character(len=AL) :: isotropicType = ""
     end type combgrid_t
@@ -94,10 +94,10 @@ module physicalmodel_m
         real(kind=4), dimension(:), allocatable :: angle
         character(len=AL) :: surroundingMaterial = ""
         character(len=AL) :: gridMaterial = ""
-        character(len=12) :: wireSectionType = ""
-        real(kind=4) :: thicknessWire
-        real(kind=4) :: widthWire
-        real(kind=4) :: diameterWire
+        character(len=12),dimension(:),allocatable :: wireSectionType
+        real(kind=4), dimension(:), allocatable :: thicknessWire
+        real(kind=4), dimension(:), allocatable :: widthWire
+        real(kind=4), dimension(:), allocatable :: diameterWire
         real(kind=4)  :: pitchFiber
         integer(kind=4) :: fiberPerPitch
         real(kind=4), dimension(:), allocatable :: volFractioFiller
@@ -219,11 +219,6 @@ module physicalmodel_m
             wovengrid%gridMaterial = trim(buf)
 
             buf = ""
-            ok = read_string_attr(file_id, path, A_WIRE_SECTION_TYPE, buf)
-            wovengrid%wireSectionType = ""
-            wovengrid%wireSectionType = trim(buf)
-
-            buf = ""
             ok = read_string_attr(file_id, path, A_MODEL_TYPE, buf)
             wovengrid%modelType = ""
             wovengrid%modelType = trim(buf)
@@ -233,15 +228,6 @@ module physicalmodel_m
             wovengrid%isotropicType = ""
             wovengrid%isotropicType = trim(buf)
 
-            if(wovengrid%wireSectionType == "rectangular") then
-                ok = read_float_attribute(file_id, path, A_THICKNESS_WIRE, &
-                                          wovengrid%thicknessWire, .true.)
-                ok = read_float_attribute(file_id, path, A_WIDTH_WIRE, &
-                                          wovengrid%widthWire, .true.)
-            else if(wovengrid%wireSectionType == "circular") then
-                ok = read_float_attribute(file_id, path, A_DIAMETER_WIRE, &
-                                          wovengrid%diameterWire, .true.)
-            endif
 
             ok = read_float_attribute(file_id, path, A_PITCH_FIBER, &
                                       wovengrid%pitchFiber, .true.)
@@ -260,6 +246,18 @@ module physicalmodel_m
             if (allocated(wovengrid%angle)) &
                     deallocate(wovengrid%angle)
             allocate(wovengrid%angle(wovengrid%nbcombs))
+            if (allocated(wovengrid%wireSectionType)) &
+                    deallocate(wovengrid%wireSectionType)
+            allocate(wovengrid%wireSectionType(wovengrid%nbcombs))
+            if (allocated(wovengrid%thicknessWire)) &
+                    deallocate(wovengrid%thicknessWire)
+            allocate(wovengrid%thicknessWire(wovengrid%nbcombs))
+            if (allocated(wovengrid%widthWire)) &
+                    deallocate(wovengrid%widthWire)
+            allocate(wovengrid%widthWire(wovengrid%nbcombs))
+            if (allocated(wovengrid%diameterWire)) &
+                    deallocate(wovengrid%diameterWire)
+            allocate(wovengrid%diameterWire(wovengrid%nbcombs))
             do i=1, size(children_name)
                 path2 = trim(path)//"/"//trim(children_name(i))
                 ok = read_float_attribute(file_id, path2, &
@@ -271,6 +269,19 @@ module physicalmodel_m
                 ok = read_float_attribute(file_id, path2, &
                             A_VOL_FRACTION_FILLER, wovengrid%volFractioFiller(i), &
                             .true.)
+                buf = ""
+                ok = read_string_attr(file_id, path, A_WIRE_SECTION_TYPE, buf)
+                wovengrid%wireSectionType(i) = ""
+                wovengrid%wireSectionType(i) = trim(buf)
+                if(wovengrid%wireSectionType(i) == "rectangular") then
+                    ok = read_float_attribute(file_id, path, A_THICKNESS_WIRE, &
+                                              wovengrid%thicknessWire(i), .true.)
+                    ok = read_float_attribute(file_id, path, A_WIDTH_WIRE, &
+                                              wovengrid%widthWire(i), .true.)
+                else if(wovengrid%wireSectionType(i) == "circular") then
+                    ok = read_float_attribute(file_id, path, A_DIAMETER_WIRE, &
+                                              wovengrid%diameterWire(i), .true.)
+                endif
             enddo
 
 
@@ -298,10 +309,6 @@ module physicalmodel_m
             combgrid%gridMaterial = ""
             combgrid%gridMaterial = trim(buf)
 
-            buf = ""
-            ok = read_string_attr(file_id, path, A_WIRE_SECTION_TYPE, buf)
-            combgrid%wireSectionType = ""
-            combgrid%wireSectionType = trim(buf)
 
             buf = ""
             ok = read_string_attr(file_id, path, A_MODEL_TYPE, buf)
@@ -314,15 +321,6 @@ module physicalmodel_m
             combgrid%isotropicType = trim(buf)
 
 
-            if(combgrid%wireSectionType == "rectangular") then
-                ok = read_float_attribute(file_id, path, A_THICKNESS_WIRE, &
-                                          combgrid%thicknessWire, .true.)
-                ok = read_float_attribute(file_id, path, A_WIDTH_WIRE, &
-                                          combgrid%widthWire, .true.)
-            else if(combgrid%wireSectionType == "circular") then
-                ok = read_float_attribute(file_id, path, A_DIAMETER_WIRE, &
-                                          combgrid%diameterWire, .true.)
-            endif
 
             ok = read_float_attribute(file_id, path, A_SHIFT, &
                                       combgrid%shift, .true.)
@@ -336,6 +334,18 @@ module physicalmodel_m
             allocate(combgrid%angle(combgrid%nbcombs))
             if (allocated(combgrid%pitch)) deallocate(combgrid%pitch)
             allocate(combgrid%pitch(combgrid%nbcombs))
+            if (allocated(combgrid%wireSectionType)) &
+                    deallocate(combgrid%wireSectionType)
+            allocate(combgrid%wireSectionType(combgrid%nbcombs))
+            if (allocated(combgrid%thicknessWire)) &
+                    deallocate(combgrid%thicknessWire)
+            allocate(combgrid%thicknessWire(combgrid%nbcombs))
+            if (allocated(combgrid%widthWire)) &
+                    deallocate(combgrid%widthWire)
+            allocate(combgrid%widthWire(combgrid%nbcombs))
+            if (allocated(combgrid%diameterWire)) &
+                    deallocate(combgrid%diameterWire)
+            allocate(combgrid%diameterWire(combgrid%nbcombs))
             do i=1, size(children_name)
                 path2 = trim(path)//"/"//trim(children_name(i))
                 ok = read_float_attribute(file_id, path2, &
@@ -347,6 +357,19 @@ module physicalmodel_m
                 ok = read_float_attribute(file_id, path2, &
                             A_PITCH, combgrid%pitch(i), &
                             .true.)
+                buf = ""
+                ok = read_string_attr(file_id, path, A_WIRE_SECTION_TYPE, buf)
+                combgrid%wireSectionType(i) = ""
+                combgrid%wireSectionType(i) = trim(buf)
+                if(combgrid%wireSectionType(i) == "rectangular") then
+                    ok = read_float_attribute(file_id, path, A_THICKNESS_WIRE, &
+                                              combgrid%thicknessWire(i), .true.)
+                    ok = read_float_attribute(file_id, path, A_WIDTH_WIRE, &
+                                              combgrid%widthWire(i), .true.)
+                else if(combgrid%wireSectionType(i) == "circular") then
+                    ok = read_float_attribute(file_id, path, A_DIAMETER_WIRE, &
+                                              combgrid%diameterWire(i), .true.)
+                endif
             enddo
 
 
