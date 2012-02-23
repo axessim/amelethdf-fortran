@@ -53,7 +53,7 @@ INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIR_FORTRAN}
                     ${CMAKE_CURRENT_BINARY_DIR}/src/amelethdf)
 SET(amelethdf_lib_dep 
   hdf5_hl_fortran hdf5_hl_f90cstub 
-  hdf5_fortran hdf5_f90cstub 
+  hdf5_hl hdf5_fortran hdf5_f90cstub 
   hdf5)
 SET(tools_lib_dep amelethdf_so ${amelethdf_lib_dep})
 
