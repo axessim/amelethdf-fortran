@@ -295,7 +295,7 @@ module structuredmesh_m
             if (allocated(somptinelt%jmin)) deallocate(somptinelt%jmin)
             allocate(somptinelt%jmin(nrecords))
             start = 0
-            call h5tget_size_f(H5T_NATIVE_INTEGER, type_size, hdferr)
+
             call h5tbread_field_index_f(file_id, path, 2, &
                                        start, nrecords, type_size, &
                                        somptinelt%jmin, hdferr)
@@ -304,7 +304,7 @@ module structuredmesh_m
             if (allocated(somptinelt%kmin)) deallocate(somptinelt%kmin)
             allocate(somptinelt%kmin(nrecords))
             start = 0
-            call h5tget_size_f(H5T_NATIVE_INTEGER, type_size, hdferr)
+
             call h5tbread_field_index_f(file_id, path, 3, &
                                        start, nrecords, type_size, &
                                        somptinelt%kmin, hdferr)
@@ -313,7 +313,7 @@ module structuredmesh_m
             if (allocated(somptinelt%imax)) deallocate(somptinelt%imax)
             allocate(somptinelt%imax(nrecords))
             start = 0
-            call h5tget_size_f(H5T_NATIVE_INTEGER, type_size, hdferr)
+
             call h5tbread_field_index_f(file_id, path, 4, &
                                        start, nrecords, type_size, &
                                        somptinelt%imax, hdferr)
@@ -322,7 +322,7 @@ module structuredmesh_m
             if (allocated(somptinelt%jmax)) deallocate(somptinelt%jmax)
             allocate(somptinelt%jmax(nrecords))
             start = 0
-            call h5tget_size_f(H5T_NATIVE_INTEGER, type_size, hdferr)
+
             call h5tbread_field_index_f(file_id, path, 5, &
                                        start, nrecords, type_size, &
                                        somptinelt%jmax, hdferr)
@@ -331,7 +331,7 @@ module structuredmesh_m
             if (allocated(somptinelt%kmax)) deallocate(somptinelt%kmax)
             allocate(somptinelt%kmax(nrecords))
             start = 0
-            call h5tget_size_f(H5T_NATIVE_INTEGER, type_size, hdferr)
+
             call h5tbread_field_index_f(file_id, path, 6, &
                                        start, nrecords, type_size, &
                                        somptinelt%kmax, hdferr)
@@ -349,7 +349,7 @@ module structuredmesh_m
             if (allocated(somptinelt%v2)) deallocate(somptinelt%v2)
             allocate(somptinelt%v2(nrecords))
             start = 0
-            call h5tget_size_f(H5T_NATIVE_REAL, type_size, hdferr)
+
             call h5tbread_field_index_f(file_id, path, 8, &
                                        start, nrecords, type_size, &
                                        somptinelt%v2, hdferr)
@@ -358,7 +358,7 @@ module structuredmesh_m
             if (allocated(somptinelt%v3)) deallocate(somptinelt%v3)
             allocate(somptinelt%v3(nrecords))
             start = 0
-            call h5tget_size_f(H5T_NATIVE_REAL, type_size, hdferr)
+
             call h5tbread_field_index_f(file_id, path, 9, &
                                        start, nrecords, type_size, &
                                        somptinelt%v3, hdferr)
