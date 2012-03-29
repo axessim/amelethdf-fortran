@@ -1,7 +1,7 @@
 program WriteComplexType
     use hdf5
     use amelethdf_m, only : hdferr, check
-    use complextype_m, only : write_complex_type, create_attribute, &
+    use complextype_m, only : write_complex_type, write_attribute, &
                               write_dataset
 
     ! file name

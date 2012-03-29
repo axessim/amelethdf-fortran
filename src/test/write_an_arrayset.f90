@@ -78,8 +78,8 @@ program write_an_arrayset
     character(len=AL) :: filename, path
     integer(hsize_t), dimension(:), allocatable :: dims
 
-    real, dimension(10, 10) :: data
-    real, dimension(10) :: dim1, dim2
+    real, dimension(1000, 1000) :: data
+    real, dimension(1000) :: dim1, dim2
     character(len=AL) :: label, physical_nature, unit, comment
 
     ! HDF5 library initialization
@@ -135,7 +135,7 @@ program write_an_arrayset
     ! Writes /floatingType/an_arrayset/data
     print *, "Writes /floatingType/an_arrayset/data ..."
     allocate(dims(2))
-    dims = (/10, 10/)
+    dims = (/1000, 1000/)
     call h5ltmake_dataset_float_f(file_id, "floatingType/an_arrayset/data", 2, &
                                   dims, data, hdferr)
     call check("Can't write dataset for "//path)
@@ -150,7 +150,7 @@ program write_an_arrayset
     path = "floatingType/an_arrayset/ds/dim1"
     print *, "Writes ", trim(path), " ..."
     allocate(dims(1))
-    dims = (/10/)
+    dims = (/1000/)
     call h5ltmake_dataset_float_f(file_id, trim(path), 1, dims, dim1, hdferr)
     call check("Can't write dataset for "//path)
     deallocate(dims)
@@ -162,7 +162,7 @@ program write_an_arrayset
     path = "floatingType/an_arrayset/ds/dim2"
     print *, "Writes ",  trim(path), " ..."
     allocate(dims(1))
-    dims = (/10/)
+    dims = (/1000/)
     call h5ltmake_dataset_float_f(file_id, trim(path), 1, dims, dim2, hdferr)
     call check("Can't write dataset for "//path)
     deallocate(dims)
