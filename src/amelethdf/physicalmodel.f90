@@ -44,7 +44,7 @@ module physicalmodel_m
     character(len=*), parameter :: A_SCALE_FILLER = "scaleFiller"
     character(len=*), parameter :: A_TYPE_FILLER = "typeFiller"
     character(len=*), parameter :: A_MODEL_TYPE = "modelType"
-    character(len=*), parameter :: A_ISOTROPIC_TYPE = "isotropicType"
+    character(len=*), parameter :: A_ISOTROPY_TYPE = "isotropyType"
     character(len=EL), dimension(:), allocatable :: children_name
 
     type physicalvolume_t
@@ -74,7 +74,7 @@ module physicalmodel_m
         real(kind=4), dimension(:), allocatable  :: widthWire
         real(kind=4), dimension(:), allocatable  :: diameterWire
         character(len=AL) :: modelType = ""
-        character(len=AL) :: isotropicType = ""
+        character(len=AL) :: isotropyType = ""
     end type combgrid_t
 
     type randomgrid_t
@@ -98,11 +98,12 @@ module physicalmodel_m
         real(kind=4), dimension(:), allocatable :: thicknessWire
         real(kind=4), dimension(:), allocatable :: widthWire
         real(kind=4), dimension(:), allocatable :: diameterWire
+        real(kind=4), dimension(:), allocatable :: pitch  !yyy
         real(kind=4)  :: pitchFiber
         integer(kind=4) :: fiberPerPitch
         real(kind=4), dimension(:), allocatable :: volFractioFiller
         character(len=AL) :: modelType = ""
-        character(len=AL) :: isotropicType = ""
+        character(len=AL) :: isotropyType = ""
     end type wovengrid_t
 
     type grid_t
@@ -224,9 +225,9 @@ module physicalmodel_m
             wovengrid%modelType = trim(buf)
 
             buf = ""
-            ok = read_string_attr(file_id, path, A_ISOTROPIC_TYPE, buf)
-            wovengrid%isotropicType = ""
-            wovengrid%isotropicType = trim(buf)
+            ok = read_string_attr(file_id, path, A_ISOTROPY_TYPE, buf)
+            wovengrid%isotropyType = ""
+            wovengrid%isotropyType = trim(buf)
 
 
             ok = read_float_attribute(file_id, path, A_PITCH_FIBER, &
@@ -258,6 +259,11 @@ module physicalmodel_m
             if (allocated(wovengrid%diameterWire)) &
                     deallocate(wovengrid%diameterWire)
             allocate(wovengrid%diameterWire(wovengrid%nbcombs))
+            if (allocated(wovengrid%pitch)) &  !yyy
+                    deallocate(wovengrid%pitch)  !yyy
+            allocate(wovengrid%pitch(wovengrid%nbcombs))  !yyy
+            
+            
             do i=1, size(children_name)
                 path2 = trim(path)//"/"//trim(children_name(i))
                 ok = read_float_attribute(file_id, path2, &
@@ -266,9 +272,15 @@ module physicalmodel_m
                 ok = read_float_attribute(file_id, path2, &
                             A_ANGLE, wovengrid%angle(i), &
                             .true.)
+                  
                 ok = read_float_attribute(file_id, path2, &
                             A_VOL_FRACTION_FILLER, wovengrid%volFractioFiller(i), &
                             .true.)
+                ok = read_float_attribute(file_id, path2, &  !yyy
+                            A_PITCH, wovengrid%pitch(i), &  !yyy
+                            .true.)  !yyy
+                           
+                
                 buf = ""
                 ok = read_string_attr(file_id, path2, A_WIRE_SECTION_TYPE, buf)
                 wovengrid%wireSectionType(i) = ""
@@ -316,9 +328,9 @@ module physicalmodel_m
             combgrid%modelType = trim(buf)
 
             buf = ""
-            ok = read_string_attr(file_id, path, A_ISOTROPIC_TYPE, buf)
-            combgrid%isotropicType = ""
-            combgrid%isotropicType = trim(buf)
+            ok = read_string_attr(file_id, path, A_ISOTROPY_TYPE, buf)
+            combgrid%isotropyType = ""
+            combgrid%isotropyType = trim(buf)
 
 
 
