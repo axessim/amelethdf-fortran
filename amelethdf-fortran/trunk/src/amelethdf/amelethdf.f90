@@ -42,6 +42,19 @@ module amelethdf_m
             ind = scan(string, char(0))
             if (ind/=0) string(ind:) = c1
         end subroutine trim_null_char
+		
+        elemental subroutine trim_data_size_char(string, data_size, c)
+            character(len=*), intent(inout) :: string
+            integer(hsize_t), intent(in) :: data_size
+            character, intent(in), optional :: c
+            character :: c1
+            integer :: ind
+
+            c1 = ""
+            if (present(c)) c1 = c
+
+            if ((data_size+1)/=0) string((data_size+1):) = c1
+        end subroutine trim_data_size_char
 
         ! Read the number of children of a group
         function read_number_of_children(file_id, path)
@@ -84,6 +97,9 @@ module amelethdf_m
             ! the returned value
             character(len=*), intent(inout) :: buf
             logical, intent(in), optional :: mandatory
+            logical :: f_corder_valid
+            integer :: cset, corder
+            integer(hsize_t) :: data_size
 
             character(len=ABSOLUTE_PATH_NAME_LENGTH) :: buf1
             logical :: here, mandatory1
@@ -101,9 +117,13 @@ module amelethdf_m
                 call check(MSIG//attr//" does not exist for : "//path)
             endif
             if (here) then
+			    call h5aget_info_by_name_f(file_id,path, attr, f_corder_valid, &
+                                           corder, cset, data_size, hdferr)
+                print *,"data_size=",data_size
                 call h5ltget_attribute_string_f(file_id, path, attr, &
                                                 buf1, hdferr)
                 call check(MSIG//"Can't read attribute for "//path//"@"//attr)
+                call trim_data_size_char(buf1,data_size)
                 call trim_null_char(buf1)
                 buf = trim(buf1)
             endif
