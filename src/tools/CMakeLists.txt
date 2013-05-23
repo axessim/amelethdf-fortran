@@ -6,12 +6,12 @@
 #INSTALL(TARGETS ameletreader DESTINATION bin)
 
 
-file(GLOB test_src *.f90)
-FOREACH(test_file ${test_src})
-    file(RELATIVE_PATH rel_test_file ${CMAKE_CURRENT_SOURCE_DIR} ${test_file})
-    STRING(REPLACE ".f90"  "" test_exec ${rel_test_file})
-    ADD_EXECUTABLE(${test_exec} ${test_file})
-    TARGET_LINK_LIBRARIES(${test_exec} ${amelethdf_so} ${tools_lib_dep})
+file(GLOB exe_src *.f90)
+FOREACH(exe_file ${exe_src})
+    file(RELATIVE_PATH rel_exe_file ${CMAKE_CURRENT_SOURCE_DIR} ${exe_file})
+    STRING(REPLACE ".f90"  "" exe_exec ${rel_exe_file})
+    ADD_EXECUTABLE(${exe_exec} ${exe_file})
+    TARGET_LINK_LIBRARIES(${exe_exec}  ${tools_lib_dep})
+	INSTALL(TARGETS ${exe_exec} DESTINATION bin)
 ENDFOREACH(test_file)
 
-INSTALL(TARGETS ${test_exec} DESTINATION bin)
