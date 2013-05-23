@@ -117,9 +117,10 @@ module amelethdf_m
                 call check(MSIG//attr//" does not exist for : "//path)
             endif
             if (here) then
+                !init data_size
+                data_size = -1
 			    call h5aget_info_by_name_f(file_id,path, attr, f_corder_valid, &
                                            corder, cset, data_size, hdferr)
-                print *,"data_size=",data_size
                 call h5ltget_attribute_string_f(file_id, path, attr, &
                                                 buf1, hdferr)
                 call check(MSIG//"Can't read attribute for "//path//"@"//attr)
