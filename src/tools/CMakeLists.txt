@@ -13,5 +13,6 @@ FOREACH(exe_file ${exe_src})
     ADD_EXECUTABLE(${exe_exec} ${exe_file})
     TARGET_LINK_LIBRARIES(${exe_exec}  ${tools_lib_dep})
 	INSTALL(TARGETS ${exe_exec} DESTINATION bin)
-ENDFOREACH(test_file)
+	MESSAGE("executable : " ${exe_exec}  ${tools_lib_dep})
+ENDFOREACH(exe_file)
 
