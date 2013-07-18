@@ -55,7 +55,9 @@ SET(amelethdf_lib_dep
   hdf5_hl_fortran hdf5_hl_f90cstub 
   hdf5_hl hdf5_fortran hdf5_f90cstub 
   hdf5)
-SET(tools_lib_dep amelethdf_so ${amelethdf_lib_dep})
+SET(tools_lib_dep amelethdf hdf5_hl_fortran hdf5_hl_f90cstub 
+  hdf5_hl hdf5_fortran hdf5_f90cstub 
+  hdf5)
 
 
 #-------------------------------------------------------------
