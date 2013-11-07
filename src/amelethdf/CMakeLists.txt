@@ -15,7 +15,7 @@ INSTALL(TARGETS amelethdf_so
   )
 
 ADD_LIBRARY(amelethdf STATIC ${amelethdf_src})
-SET_TARGET_PROPERTIES( amelethdf  PROPERTIES OUTPUT_NAME "amelethdff")
+SET_TARGET_PROPERTIES( amelethdf  PROPERTIES OUTPUT_NAME "amelethdff_static")
 INSTALL(TARGETS amelethdf
   EXPORT        AmeletHDFFLibraryDepends
   RUNTIME       DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
