@@ -10,6 +10,10 @@ MESSAGE( STATUS "Configuring project Amelet-HDF for Fortran" )
 MESSAGE( STATUS "Host system is ${CMAKE_SYSTEM_NAME}"  )
 MESSAGE( STATUS "Configuration is ${CMAKE_BUILD_TYPE}"  )
 
+SET(LINUX "${CMAKE_SYSTEM_NAME} MATCHES Linux")
+SET(WIN "${CMAKE_SYSTEM_NAME} MATCHES Windows")
+
+
 
 #-------------------------------------------------------------
 # Configu install-tree
@@ -17,15 +21,32 @@ MESSAGE( STATUS "Configuration is ${CMAKE_BUILD_TYPE}"  )
 # Offer the user the choice of overriding the installation directories
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
 IF (WIN32)
-	set(INSTALL_ARCHIVE_DIR lib/static CACHE PATH "Installation directory for libraries")
+  set(INSTALL_ARCHIVE_DIR lib/static CACHE PATH "Installation directory for libraries")
 ELSE ()
-    set(INSTALL_ARCHIVE_DIR lib CACHE PATH "Installation directory for libraries")
+  set(INSTALL_ARCHIVE_DIR lib CACHE PATH "Installation directory for libraries")
 ENDIF ()
 set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
 set(INSTALL_INCLUDE_DIR include CACHE PATH
   "Installation directory for header files")
 set(INSTALL_DATA_DIR share CACHE PATH
   "Installation directory for data files")
+
+IF (WIN32)
+  OPTION(AH5F_BUILD_STATIC_LIBRARY ON
+    "Set to ON to build static libraries")
+ELSE ()
+  OPTION(AH5F_BUILD_STATIC_LIBRARY OFF
+    "Set to ON to build static libraries")
+ENDIF ()
+
+IF (WIN)
+  IF (AH5F_BUILD_STATIC_LIBRARY)
+    
+  ELSE ()
+    MESSAGE( FATAL_ERROR 
+      "Shared library does not works under Windons. Check AH5F_BUILD_STATIC_LIBRARY options")
+  ENDIF ()
+ENDIF ()
  
 # Make relative paths absolute (needed later on)
 foreach(p LIB ARCHIVE BIN INCLUDE DATA)
@@ -34,7 +55,6 @@ foreach(p LIB ARCHIVE BIN INCLUDE DATA)
     set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
   endif()
 endforeach()
-
 
 #-------------------------------------------------------------
 # Found all dependaces.
@@ -51,12 +71,14 @@ ENDIF ()
 
 INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIR_FORTRAN}
                     ${CMAKE_CURRENT_BINARY_DIR}/src/amelethdf)
-SET(amelethdf_lib_dep 
-  hdf5_hl_fortran hdf5_hl_f90cstub 
-  hdf5_hl hdf5_fortran hdf5_f90cstub 
+SET(amelethdf_lib_dep
+  hdf5_hl_fortran hdf5_hl_f90cstub
+  hdf5_hl hdf5_fortran hdf5_f90cstub
   hdf5)
-SET(tools_lib_dep amelethdf hdf5_hl_fortran hdf5_hl_f90cstub 
-  hdf5_hl hdf5_fortran hdf5_f90cstub 
+SET(tools_lib_dep
+  amelethdff
+  hdf5_hl_fortran hdf5_hl_f90cstub
+  hdf5_hl hdf5_fortran hdf5_f90cstub
   hdf5)
 
 
@@ -76,7 +98,7 @@ set(AMELET_HDF_F_INCLUDE_DIRS
 set(AMELET_HDF_F_CMAKE_DIR 
   "${PROJECT_BINARY_DIR}")
 # Add all targets to the build-tree export set
-export(TARGETS amelethdf amelethdf_so
+export(TARGETS amelethdff
   FILE "${AMELET_HDF_F_CMAKE_DIR}/AmeletHDFFLibraryDepends.cmake")
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
