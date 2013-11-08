@@ -39,14 +39,14 @@ ELSE ()
     "Set to ON to build static libraries")
 ENDIF ()
 
-IF (WIN)
+IF (WIN32)
   IF (AH5F_BUILD_STATIC_LIBRARY)
     
-  ELSE ()
+  ELSE (AH5F_BUILD_STATIC_LIBRARY)
     MESSAGE( FATAL_ERROR 
       "Shared library does not works under Windons. Check AH5F_BUILD_STATIC_LIBRARY options")
-  ENDIF ()
-ENDIF ()
+  ENDIF (AH5F_BUILD_STATIC_LIBRARY)
+ENDIF (WIN32)
  
 # Make relative paths absolute (needed later on)
 foreach(p LIB ARCHIVE BIN INCLUDE DATA)
